@@ -1,0 +1,28 @@
+{
+  "name": "ai-toolkit",
+  "version": "0.10.0",
+  "entry": "dist/index.js",
+  "tools": [
+    "prepare_context",
+    "create_file",
+    "edit_file",
+    "apply_patch",
+    "review_code",
+    "debug_error",
+    "generate_docs",
+    "refactor_plan",
+    "create_skill",
+    "find_files",
+    "search_text",
+    "edit_many",
+    "file_outline",
+    "inspect_symbol",
+    "import_map",
+    "check_config",
+    "ask_user",
+    "format_check",
+    "history",
+    "typecheck_file"
+  ],
+  "notes": "Addon plain TS: nel tuo agent packages/addons/src/core.ts -> installPlainTools() fa registry.register(def) con retry already registered. Zero modifiche al core."
+}

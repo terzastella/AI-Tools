@@ -1,0 +1,58 @@
+{
+  "name": "ai-toolkit",
+  "version": "0.10.0",
+  "description": "AI-Toolkit — 31 tool con capo-cantiere (todo+delegate). Privato, addon plain + policy/audit.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./tools/writer": "./dist/tools/writer/definition.js",
+    "./tools/editor": "./dist/tools/editor/definition.js",
+    "./tools/preparer": "./dist/tools/preparer/definition.js",
+    "./tools/reviewer": "./dist/tools/reviewer/definition.js",
+    "./tools/debugger": "./dist/tools/debugger/definition.js",
+    "./tools/skill-creator": "./dist/tools/skill-creator/definition.js",
+    "./tools/apply-patch": "./dist/tools/apply-patch/definition.js",
+    "./tools/doc-gen": "./dist/tools/doc-gen/definition.js",
+    "./tools/refactor-plan": "./dist/tools/refactor-plan/definition.js",
+    "./tools/diagnose": "./dist/tools/diagnose/definition.js",
+    "./tools/search-pro": "./dist/tools/search-pro/definition.js",
+    "./tools/rename": "./dist/tools/rename/definition.js",
+    "./tools/read": "./dist/tools/read/definition.js",
+    "./tools/list": "./dist/tools/list/definition.js",
+    "./tools/goto": "./dist/tools/goto/definition.js",
+    "./tools/refs": "./dist/tools/refs/definition.js",
+    "./tools/move": "./dist/tools/move/definition.js",
+    "./tools/git": "./dist/tools/git/definition.js",
+    "./tools/todo": "./dist/tools/todo/definition.js",
+    "./tools/delegate": "./dist/tools/delegate/definition.js",
+    "./tools/find-files": "./dist/tools/find-files/definition.js",
+    "./tools/search-text": "./dist/tools/search-text/definition.js",
+    "./tools/edit-many": "./dist/tools/edit-many/definition.js",
+    "./tools/file-outline": "./dist/tools/file-outline/definition.js",
+    "./tools/inspect-symbol": "./dist/tools/inspect-symbol/definition.js",
+    "./tools/import-map": "./dist/tools/import-map/definition.js",
+    "./tools/check-config": "./dist/tools/check-config/definition.js",
+    "./tools/ask-user": "./dist/tools/ask-user/definition.js",
+    "./tools/format-check": "./dist/tools/format-check/definition.js",
+    "./tools/history": "./dist/tools/history/definition.js",
+    "./tools/typecheck-file": "./dist/tools/typecheck-file/definition.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "bench": "vitest bench --run tests/bench",
+    "lint": "echo \"(eslint futuro — per ora typecheck strict)\" && npm run typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.3"
+  }
+}

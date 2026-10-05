@@ -1,0 +1,13 @@
+{
+  "comment": "MCP futuro (solo config, zero codice core). Usa McpManager esistente: new McpManager({registry}) + configureServer + connectAll() -> mcp__<server>__<tool>.",
+  "mcp": {
+    "servers": {
+      "ai-toolkit-py": {
+        "command": "python",
+        "args": ["servers/creative.py"],
+        "env": {},
+        "note": "Per futura logica pesante Python (embeddings, jinja). Oggi non attivo: V0.6 resta addon TS per velocità."
+      }
+    }
+  }
+}
