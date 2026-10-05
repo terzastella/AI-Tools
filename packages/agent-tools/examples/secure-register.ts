@@ -38,6 +38,10 @@ import { countTokensDefinition } from "../src/tools/count-tokens/definition.js";
 import { chunkTextDefinition } from "../src/tools/chunk-text/definition.js";
 import { packContextDefinition } from "../src/tools/pack-context/definition.js";
 import { mcpCallDefinition } from "../src/tools/mcp-call/definition.js";
+import { shellSessionDefinition } from "../src/tools/shell-session/definition.js";
+import { gitWriteDefinition } from "../src/tools/git-write/definition.js";
+import { testRunnerDefinition } from "../src/tools/test-runner/definition.js";
+import { lintFixDefinition } from "../src/tools/lint-fix/definition.js";
 import { wrapDefinition } from "../src/core/guarded.js";
 import { standardPolicy } from "../src/core/policy.js";
 import { FileAudit } from "../src/core/audit.js";
@@ -80,6 +84,10 @@ const all = [
   chunkTextDefinition,
   packContextDefinition,
   mcpCallDefinition,
+  shellSessionDefinition,
+  gitWriteDefinition,
+  testRunnerDefinition,
+  lintFixDefinition,
 ];
 
 export function secureDefinitions(cwd: string = process.cwd()) {

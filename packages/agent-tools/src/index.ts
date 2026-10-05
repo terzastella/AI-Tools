@@ -35,6 +35,10 @@ export { countTokensDefinition } from "./tools/count-tokens/definition.js";
 export { chunkTextDefinition } from "./tools/chunk-text/definition.js";
 export { packContextDefinition } from "./tools/pack-context/definition.js";
 export { mcpCallDefinition } from "./tools/mcp-call/definition.js";
+export { shellSessionDefinition } from "./tools/shell-session/definition.js";
+export { gitWriteDefinition } from "./tools/git-write/definition.js";
+export { testRunnerDefinition } from "./tools/test-runner/definition.js";
+export { lintFixDefinition } from "./tools/lint-fix/definition.js";
 export { writerLogic, WRITER_VERSION } from "./tools/writer/logic.js";
 export { editorLogic, EDITOR_VERSION } from "./tools/editor/logic.js";
 export { preparerLogic, PREPARER_VERSION } from "./tools/preparer/logic.js";
@@ -71,3 +75,7 @@ export { countTokensLogic, countStats, COUNT_TOKENS_VERSION } from "./tools/coun
 export { chunkTextLogic, chunkText, CHUNK_TEXT_VERSION } from "./tools/chunk-text/logic.js";
 export { packContextLogic, PACK_CONTEXT_VERSION } from "./tools/pack-context/logic.js";
 export { mcpCallLogic, MCP_CALL_VERSION } from "./tools/mcp-call/logic.js";
+export { shellSessionLogic, SHELL_SESSION_VERSION } from "./tools/shell-session/logic.js";
+export { gitWriteLogic, GIT_WRITE_VERSION } from "./tools/git-write/logic.js";
+export { testRunnerLogic, TEST_RUNNER_VERSION } from "./tools/test-runner/logic.js";
+export { lintFixLogic, LINT_FIX_VERSION } from "./tools/lint-fix/logic.js";

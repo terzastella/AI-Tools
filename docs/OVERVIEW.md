@@ -3,7 +3,7 @@
 Immagina il modello come uno stagista bravissimo ma senza mani.
 I tool sono le mani.
 
-## Mani che hai già (36)
+## Mani che hai già (40)
 
 - Occhi e penna: `read_file, list_directory, find_files, create_file, edit_file, apply_patch, move_file`
 - Ctrl+F potenziato: `search_text, search_pro, prepare_context, find_references, go_to_definition, inspect_symbol`
@@ -11,6 +11,7 @@ I tool sono le mani.
 - Quadernetto: `todo, history, ask_user`
 - Fase 3 nuove: `bash_exec` (fornelli, con accept), `count_tokens, chunk_text, pack_context` (non riempirgli la testa)
 - Fase 4 nuova: `mcp_call` (il postino MCP: chiama server esterni come web fetch/search via config)
+- Fase 5 nuove: `shell_session` (fornelli sempre accesi: dev-server e test lunghi), `git_write` (commit/branch/stash locali, mai push), `test_runner` (pass/fail strutturati), `lint_fix` (ripara invece di solo controllare)
 
 ## Lucchetto nuovo (Fase 2)
 
@@ -31,3 +32,4 @@ File `src/core/guarded.ts`:
 
 - Fase 3 fatta: `bash_exec` stretto + `count_tokens, chunk_text, pack_context` nativi
 - Fase 4 fatta: `mcp_call` vero via MCP (stdio initialize + list + call, fake echo server per test, web via config)
+- Fase 5 fatta: loop dev chiuso (sessioni, git locale, test strutturati, lint fix) + fix permessi spawn

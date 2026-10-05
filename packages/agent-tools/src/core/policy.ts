@@ -51,7 +51,7 @@ export function checkPolicy(
   return { allow: false, reason: "no allow rule (fail-closed)" };
 }
 
-/** Estrae un target relativo best-effort dagli args noti (path, paths, edits[].path). */
+/** Estrae un target relativo best-effort dagli args noti (path, paths, files, edits[].path). */
 export function extractTargets(args: Record<string, unknown>): string[] {
   const out: string[] = [];
   const push = (v: unknown) => {
@@ -59,6 +59,7 @@ export function extractTargets(args: Record<string, unknown>): string[] {
   };
   if (typeof args["path"] === "string") push(args["path"]);
   if (Array.isArray(args["paths"])) for (const p of args["paths"] as unknown[]) push(p);
+  if (Array.isArray(args["files"])) for (const p of args["files"] as unknown[]) push(p);
   if (Array.isArray(args["edits"]))
     for (const e of args["edits"] as unknown[]) {
       if (e !== null && typeof e === "object" && typeof (e as Record<string, unknown>)["path"] === "string")
