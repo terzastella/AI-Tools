@@ -92,6 +92,12 @@ export const standardPolicy: Policy = {
     // Fase 6: memoria locale (.agent/memory dentro cwd), chiede accept in scrittura.
     { domain: "memory", action: "read" },
     { domain: "memory", action: "write" },
+    // Fase 7: promemoria schedulati (.agent/schedule dentro cwd).
+    { domain: "schedule", action: "read" },
+    { domain: "schedule", action: "write" },
+    // fix: todo vive in .agent/todos.json senza path-args (prima sempre deny da avvolto).
+    { domain: "todo", action: "read" },
+    { domain: "todo", action: "write" },
   ],
   deny: [
     { domain: "filesystem", action: "write", targetGlob: ".env*" },

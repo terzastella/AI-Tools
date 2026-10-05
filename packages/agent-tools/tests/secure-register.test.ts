@@ -25,9 +25,9 @@ afterEach(async () => {
 });
 
 describe("secure-register", () => {
-  it("espone tutti i 45 tool avvolti", () => {
+  it("espone tutti i 49 tool avvolti", () => {
     const defs = secureDefinitions(tmp);
-    expect(defs.length).toBe(45);
+    expect(defs.length).toBe(49);
   });
 
   it("edit_many verso .env viene bloccato con POLICY_DENIED", async () => {

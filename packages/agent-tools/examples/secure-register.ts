@@ -47,6 +47,10 @@ import { webSearchDefinition } from "../src/tools/web-search/definition.js";
 import { astSearchDefinition } from "../src/tools/ast-search/definition.js";
 import { memoryStoreDefinition } from "../src/tools/memory-store/definition.js";
 import { envSecretsDefinition } from "../src/tools/env-secrets/definition.js";
+import { imageReadDefinition } from "../src/tools/image-read/definition.js";
+import { browserSnapshotDefinition } from "../src/tools/browser-snapshot/definition.js";
+import { scheduleCronDefinition } from "../src/tools/schedule-cron/definition.js";
+import { sandboxDockerDefinition } from "../src/tools/sandbox-docker/definition.js";
 import { wrapDefinition } from "../src/core/guarded.js";
 import { standardPolicy } from "../src/core/policy.js";
 import { FileAudit } from "../src/core/audit.js";
@@ -98,6 +102,10 @@ const all = [
   astSearchDefinition,
   memoryStoreDefinition,
   envSecretsDefinition,
+  imageReadDefinition,
+  browserSnapshotDefinition,
+  scheduleCronDefinition,
+  sandboxDockerDefinition,
 ];
 
 export function secureDefinitions(cwd: string = process.cwd()) {

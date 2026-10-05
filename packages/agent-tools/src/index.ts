@@ -44,6 +44,10 @@ export { webSearchDefinition } from "./tools/web-search/definition.js";
 export { astSearchDefinition } from "./tools/ast-search/definition.js";
 export { memoryStoreDefinition } from "./tools/memory-store/definition.js";
 export { envSecretsDefinition } from "./tools/env-secrets/definition.js";
+export { imageReadDefinition } from "./tools/image-read/definition.js";
+export { browserSnapshotDefinition } from "./tools/browser-snapshot/definition.js";
+export { scheduleCronDefinition } from "./tools/schedule-cron/definition.js";
+export { sandboxDockerDefinition } from "./tools/sandbox-docker/definition.js";
 export { writerLogic, WRITER_VERSION } from "./tools/writer/logic.js";
 export { editorLogic, EDITOR_VERSION } from "./tools/editor/logic.js";
 export { preparerLogic, PREPARER_VERSION } from "./tools/preparer/logic.js";
@@ -89,3 +93,7 @@ export { webSearchLogic, parseSearchHits, WEB_SEARCH_VERSION } from "./tools/web
 export { astSearchLogic, AST_SEARCH_VERSION } from "./tools/ast-search/logic.js";
 export { memoryStoreLogic, MEMORY_STORE_VERSION } from "./tools/memory-store/logic.js";
 export { envSecretsLogic, redactSecrets, ENV_SECRETS_VERSION } from "./tools/env-secrets/logic.js";
+export { imageReadLogic, IMAGE_READ_VERSION } from "./tools/image-read/logic.js";
+export { browserSnapshotLogic, BROWSER_SNAPSHOT_VERSION } from "./tools/browser-snapshot/logic.js";
+export { scheduleCronLogic, cronDue, validCron, SCHEDULE_CRON_VERSION } from "./tools/schedule-cron/logic.js";
+export { sandboxDockerLogic, SANDBOX_DOCKER_VERSION } from "./tools/sandbox-docker/logic.js";
