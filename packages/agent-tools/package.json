@@ -1,7 +1,7 @@
 {
   "name": "ai-toolkit",
-  "version": "0.10.0",
-  "description": "AI-Toolkit — 31 tool con capo-cantiere (todo+delegate). Privato, addon plain + policy/audit.",
+  "version": "0.11.0",
+  "description": "AI-Tools — 35 tool con approval gate accept/deny. Privato, addon plain + policy/audit.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.js",
@@ -37,7 +37,11 @@
     "./tools/ask-user": "./dist/tools/ask-user/definition.js",
     "./tools/format-check": "./dist/tools/format-check/definition.js",
     "./tools/history": "./dist/tools/history/definition.js",
-    "./tools/typecheck-file": "./dist/tools/typecheck-file/definition.js"
+    "./tools/typecheck-file": "./dist/tools/typecheck-file/definition.js",
+    "./tools/bash-exec": "./dist/tools/bash-exec/definition.js",
+    "./tools/count-tokens": "./dist/tools/count-tokens/definition.js",
+    "./tools/chunk-text": "./dist/tools/chunk-text/definition.js",
+    "./tools/pack-context": "./dist/tools/pack-context/definition.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

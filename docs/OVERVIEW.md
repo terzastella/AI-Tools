@@ -3,12 +3,13 @@
 Immagina il modello come uno stagista bravissimo ma senza mani.
 I tool sono le mani.
 
-## Mani che hai già (31)
+## Mani che hai già (35)
 
 - Occhi e penna: `read_file, list_directory, find_files, create_file, edit_file, apply_patch, move_file`
 - Ctrl+F potenziato: `search_text, search_pro, prepare_context, find_references, go_to_definition, inspect_symbol`
 - Dottore del codice TS: `diagnose, typecheck_file, review_code, debug_error`
 - Quadernetto: `todo, history, ask_user`
+- Fase 3 nuove: `bash_exec` (fornelli, con accept), `count_tokens, chunk_text, pack_context` (non riempirgli la testa)
 
 ## Lucchetto nuovo (Fase 2)
 
@@ -27,5 +28,5 @@ File `src/core/guarded.ts`:
 
 ## Prossimi passi
 
-- Fase 3: `bash_exec` stretto + `count_tokens, chunk_text, pack_context` nativi
+- Fase 3 fatta: `bash_exec` stretto + `count_tokens, chunk_text, pack_context` nativi
 - Fase 4: `mcp_call` per web via MCP

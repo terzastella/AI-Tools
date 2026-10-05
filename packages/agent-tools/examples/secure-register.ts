@@ -33,6 +33,10 @@ import { askUserDefinition } from "../src/tools/ask-user/definition.js";
 import { formatCheckDefinition } from "../src/tools/format-check/definition.js";
 import { historyDefinition } from "../src/tools/history/definition.js";
 import { typecheckFileDefinition } from "../src/tools/typecheck-file/definition.js";
+import { bashExecDefinition } from "../src/tools/bash-exec/definition.js";
+import { countTokensDefinition } from "../src/tools/count-tokens/definition.js";
+import { chunkTextDefinition } from "../src/tools/chunk-text/definition.js";
+import { packContextDefinition } from "../src/tools/pack-context/definition.js";
 import { wrapDefinition } from "../src/core/guarded.js";
 import { standardPolicy } from "../src/core/policy.js";
 import { FileAudit } from "../src/core/audit.js";
@@ -70,6 +74,10 @@ const all = [
   formatCheckDefinition,
   historyDefinition,
   typecheckFileDefinition,
+  bashExecDefinition,
+  countTokensDefinition,
+  chunkTextDefinition,
+  packContextDefinition,
 ];
 
 export function secureDefinitions(cwd: string = process.cwd()) {

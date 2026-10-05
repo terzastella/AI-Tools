@@ -85,6 +85,9 @@ export const standardPolicy: Policy = {
     { domain: "filesystem", action: "write", targetGlob: ".tmp-*/**" },
     { domain: "filesystem", action: "write", targetGlob: ".agent/addons/**" },
     { domain: "filesystem", action: "write", targetGlob: ".agent/history/**" },
+    // Fase 3: terminale permesso dalla policy, ma serve SEMPRE accept umano (approval gate).
+    // I comandi pericolosi restano bloccati in logic + guarded.
+    { domain: "terminal", action: "execute" },
   ],
   deny: [
     { domain: "filesystem", action: "write", targetGlob: ".env*" },
