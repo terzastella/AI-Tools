@@ -1,7 +1,7 @@
 {
   "name": "ai-toolkit",
-  "version": "0.13.0",
-  "description": "AI-Tools — 40 tool con approval gate accept/deny + MCP. Privato, addon plain + policy/audit.",
+  "version": "0.14.0",
+  "description": "AI-Tools — 45 tool con approval gate accept/deny + MCP. Privato, addon plain + policy/audit.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.js",
@@ -46,7 +46,12 @@
     "./tools/shell-session": "./dist/tools/shell-session/definition.js",
     "./tools/git-write": "./dist/tools/git-write/definition.js",
     "./tools/test-runner": "./dist/tools/test-runner/definition.js",
-    "./tools/lint-fix": "./dist/tools/lint-fix/definition.js"
+    "./tools/lint-fix": "./dist/tools/lint-fix/definition.js",
+    "./tools/web-fetch": "./dist/tools/web-fetch/definition.js",
+    "./tools/web-search": "./dist/tools/web-search/definition.js",
+    "./tools/ast-search": "./dist/tools/ast-search/definition.js",
+    "./tools/memory-store": "./dist/tools/memory-store/definition.js",
+    "./tools/env-secrets": "./dist/tools/env-secrets/definition.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

@@ -42,6 +42,11 @@ import { shellSessionDefinition } from "../src/tools/shell-session/definition.js
 import { gitWriteDefinition } from "../src/tools/git-write/definition.js";
 import { testRunnerDefinition } from "../src/tools/test-runner/definition.js";
 import { lintFixDefinition } from "../src/tools/lint-fix/definition.js";
+import { webFetchDefinition } from "../src/tools/web-fetch/definition.js";
+import { webSearchDefinition } from "../src/tools/web-search/definition.js";
+import { astSearchDefinition } from "../src/tools/ast-search/definition.js";
+import { memoryStoreDefinition } from "../src/tools/memory-store/definition.js";
+import { envSecretsDefinition } from "../src/tools/env-secrets/definition.js";
 import { wrapDefinition } from "../src/core/guarded.js";
 import { standardPolicy } from "../src/core/policy.js";
 import { FileAudit } from "../src/core/audit.js";
@@ -88,6 +93,11 @@ const all = [
   gitWriteDefinition,
   testRunnerDefinition,
   lintFixDefinition,
+  webFetchDefinition,
+  webSearchDefinition,
+  astSearchDefinition,
+  memoryStoreDefinition,
+  envSecretsDefinition,
 ];
 
 export function secureDefinitions(cwd: string = process.cwd()) {

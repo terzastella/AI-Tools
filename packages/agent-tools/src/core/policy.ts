@@ -89,6 +89,9 @@ export const standardPolicy: Policy = {
     // Fase 3: terminale permesso dalla policy, ma serve SEMPRE accept umano (approval gate).
     // I comandi pericolosi restano bloccati in logic + guarded.
     { domain: "terminal", action: "execute" },
+    // Fase 6: memoria locale (.agent/memory dentro cwd), chiede accept in scrittura.
+    { domain: "memory", action: "read" },
+    { domain: "memory", action: "write" },
   ],
   deny: [
     { domain: "filesystem", action: "write", targetGlob: ".env*" },

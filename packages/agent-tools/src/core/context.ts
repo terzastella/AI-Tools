@@ -31,6 +31,12 @@ export interface ToolContext {
    * (comportamento vecchio, utile per i test).
    */
   approver?: Approver;
+  /**
+   * Se true, i tool web possono contattare anche loopback/reti private.
+   * Default false (blocca SSRF verso 127.x, 10.x, 192.168.x, metadata cloud).
+   * Serve true solo nei test con server locale.
+   */
+  allowPrivateNet?: boolean;
 }
 
 export function createContext(cwd: string = process.cwd(), logger: Logger = noopLogger): ToolContext {

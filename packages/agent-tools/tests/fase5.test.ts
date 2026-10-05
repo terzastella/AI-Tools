@@ -33,8 +33,8 @@ afterEach(async () => {
 });
 
 describe("fase5 loop dev", () => {
-  it("secure-register espone 40 tool", () => {
-    expect(secureDefinitions(tmp).length).toBe(40);
+  it("secure-register espone 45 tool", () => {
+    expect(secureDefinitions(tmp).length).toBe(45);
   });
 
   it("shell_session start->poll->kill su processo veloce", async () => {
