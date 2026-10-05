@@ -37,6 +37,13 @@ export interface ToolContext {
    * Serve true solo nei test con server locale.
    */
   allowPrivateNet?: boolean;
+  /**
+   * Tetto token stimati per sessione (args+result di ogni tool).
+   * Se superato, i tool tornano BUDGET_EXCEEDED. Opzionale, default nessun tetto.
+   */
+  budgetLimit?: number;
+  /** Id sessione agente: finisce in audit per raggruppare le call. Opzionale. */
+  sessionId?: string;
 }
 
 export function createContext(cwd: string = process.cwd(), logger: Logger = noopLogger): ToolContext {

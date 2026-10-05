@@ -14,6 +14,7 @@ export interface AuditEntry {
   decision: "allow" | "deny" | "need_approval";
   reason?: string;
   cwd: string;
+  sessionId?: string | undefined;
 }
 
 export interface AuditSink {

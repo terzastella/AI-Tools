@@ -47,8 +47,8 @@ function ctx() {
 }
 
 describe("fase7 sensi e autonomia", () => {
-  it("secure-register espone 49 tool", () => {
-    expect(secureDefinitions(tmp).length).toBe(49);
+  it("secure-register espone 52 tool", () => {
+    expect(secureDefinitions(tmp).length).toBe(52);
   });
 
   it("image_read png torna base64", async () => {

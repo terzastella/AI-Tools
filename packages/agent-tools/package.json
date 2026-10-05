@@ -1,7 +1,7 @@
 {
   "name": "ai-toolkit",
-  "version": "0.15.0",
-  "description": "AI-Tools — 49 tool con approval gate accept/deny + MCP. Privato, addon plain + policy/audit.",
+  "version": "0.16.0",
+  "description": "AI-Tools — 52 tool con approval gate accept/deny + MCP + LSP + budget. Privato, addon plain + policy/audit.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.js",
@@ -55,7 +55,10 @@
     "./tools/image-read": "./dist/tools/image-read/definition.js",
     "./tools/browser-snapshot": "./dist/tools/browser-snapshot/definition.js",
     "./tools/schedule-cron": "./dist/tools/schedule-cron/definition.js",
-    "./tools/sandbox-docker": "./dist/tools/sandbox-docker/definition.js"
+    "./tools/sandbox-docker": "./dist/tools/sandbox-docker/definition.js",
+    "./tools/lsp-bridge": "./dist/tools/lsp-bridge/definition.js",
+    "./tools/budget-status": "./dist/tools/budget-status/definition.js",
+    "./tools/run-subagent": "./dist/tools/run-subagent/definition.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

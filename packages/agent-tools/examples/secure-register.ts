@@ -51,6 +51,9 @@ import { imageReadDefinition } from "../src/tools/image-read/definition.js";
 import { browserSnapshotDefinition } from "../src/tools/browser-snapshot/definition.js";
 import { scheduleCronDefinition } from "../src/tools/schedule-cron/definition.js";
 import { sandboxDockerDefinition } from "../src/tools/sandbox-docker/definition.js";
+import { lspBridgeDefinition } from "../src/tools/lsp-bridge/definition.js";
+import { budgetStatusDefinition } from "../src/tools/budget-status/definition.js";
+import { runSubagentDefinition } from "../src/tools/run-subagent/definition.js";
 import { wrapDefinition } from "../src/core/guarded.js";
 import { standardPolicy } from "../src/core/policy.js";
 import { FileAudit } from "../src/core/audit.js";
@@ -106,6 +109,9 @@ const all = [
   browserSnapshotDefinition,
   scheduleCronDefinition,
   sandboxDockerDefinition,
+  lspBridgeDefinition,
+  budgetStatusDefinition,
+  runSubagentDefinition,
 ];
 
 export function secureDefinitions(cwd: string = process.cwd()) {

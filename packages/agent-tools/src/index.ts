@@ -48,6 +48,9 @@ export { imageReadDefinition } from "./tools/image-read/definition.js";
 export { browserSnapshotDefinition } from "./tools/browser-snapshot/definition.js";
 export { scheduleCronDefinition } from "./tools/schedule-cron/definition.js";
 export { sandboxDockerDefinition } from "./tools/sandbox-docker/definition.js";
+export { lspBridgeDefinition } from "./tools/lsp-bridge/definition.js";
+export { budgetStatusDefinition } from "./tools/budget-status/definition.js";
+export { runSubagentDefinition } from "./tools/run-subagent/definition.js";
 export { writerLogic, WRITER_VERSION } from "./tools/writer/logic.js";
 export { editorLogic, EDITOR_VERSION } from "./tools/editor/logic.js";
 export { preparerLogic, PREPARER_VERSION } from "./tools/preparer/logic.js";
@@ -97,3 +100,6 @@ export { imageReadLogic, IMAGE_READ_VERSION } from "./tools/image-read/logic.js"
 export { browserSnapshotLogic, BROWSER_SNAPSHOT_VERSION } from "./tools/browser-snapshot/logic.js";
 export { scheduleCronLogic, cronDue, validCron, SCHEDULE_CRON_VERSION } from "./tools/schedule-cron/logic.js";
 export { sandboxDockerLogic, SANDBOX_DOCKER_VERSION } from "./tools/sandbox-docker/logic.js";
+export { lspBridgeLogic, LSP_BRIDGE_VERSION } from "./tools/lsp-bridge/logic.js";
+export { budgetStatusLogic, BUDGET_STATUS_VERSION } from "./tools/budget-status/logic.js";
+export { runSubagentLogic, RUN_SUBAGENT_VERSION } from "./tools/run-subagent/logic.js";

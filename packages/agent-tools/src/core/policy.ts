@@ -98,6 +98,9 @@ export const standardPolicy: Policy = {
     // fix: todo vive in .agent/todos.json senza path-args (prima sempre deny da avvolto).
     { domain: "todo", action: "read" },
     { domain: "todo", action: "write" },
+    // Fase 8: budget in .agent/budget.jsonl (reset esplicito via tool).
+    { domain: "budget", action: "read" },
+    { domain: "budget", action: "write" },
   ],
   deny: [
     { domain: "filesystem", action: "write", targetGlob: ".env*" },
