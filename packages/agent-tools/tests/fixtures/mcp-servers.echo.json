@@ -1,0 +1,12 @@
+{
+  "mcp": {
+    "servers": {
+      "echo": {
+        "command": "node",
+        "args": ["tests/fixtures/mcp-echo-server.mjs"],
+        "env": {},
+        "note": "Fake server solo per test. Per il web vero aggiungi un server MCP fetch/search e punta config a mcp-servers.json del tuo progetto."
+      }
+    }
+  }
+}

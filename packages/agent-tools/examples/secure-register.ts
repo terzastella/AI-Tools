@@ -37,6 +37,7 @@ import { bashExecDefinition } from "../src/tools/bash-exec/definition.js";
 import { countTokensDefinition } from "../src/tools/count-tokens/definition.js";
 import { chunkTextDefinition } from "../src/tools/chunk-text/definition.js";
 import { packContextDefinition } from "../src/tools/pack-context/definition.js";
+import { mcpCallDefinition } from "../src/tools/mcp-call/definition.js";
 import { wrapDefinition } from "../src/core/guarded.js";
 import { standardPolicy } from "../src/core/policy.js";
 import { FileAudit } from "../src/core/audit.js";
@@ -78,6 +79,7 @@ const all = [
   countTokensDefinition,
   chunkTextDefinition,
   packContextDefinition,
+  mcpCallDefinition,
 ];
 
 export function secureDefinitions(cwd: string = process.cwd()) {

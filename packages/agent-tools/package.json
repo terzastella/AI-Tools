@@ -1,7 +1,7 @@
 {
   "name": "ai-toolkit",
-  "version": "0.11.0",
-  "description": "AI-Tools — 35 tool con approval gate accept/deny. Privato, addon plain + policy/audit.",
+  "version": "0.12.0",
+  "description": "AI-Tools — 36 tool con approval gate accept/deny + MCP. Privato, addon plain + policy/audit.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.js",
@@ -41,7 +41,8 @@
     "./tools/bash-exec": "./dist/tools/bash-exec/definition.js",
     "./tools/count-tokens": "./dist/tools/count-tokens/definition.js",
     "./tools/chunk-text": "./dist/tools/chunk-text/definition.js",
-    "./tools/pack-context": "./dist/tools/pack-context/definition.js"
+    "./tools/pack-context": "./dist/tools/pack-context/definition.js",
+    "./tools/mcp-call": "./dist/tools/mcp-call/definition.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
