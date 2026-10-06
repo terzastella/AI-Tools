@@ -6,7 +6,7 @@ import { delegatePermissions } from "./permissions.js";
 export const delegateDefinition: ToolDefinition<DelegateInput, DelegateOutput> = {
   name: "delegate_task",
   label: "Delegate task",
-  description: "Capo-cantiere read-only: fa piano furbo, registra todo in .agent/todos.json, verifica ogni file (leggibile + puzze). Non scrive codice, propone.",
+  description: "Capo-cantiere planning-only (NON chiama LLM): fa piano, registra todo, verifica file. Non scrive codice, propone. Per sub-agent veri che ragionano usa run_subagent.",
   category: "other",
   parameters: {
     type: "object",
