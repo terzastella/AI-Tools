@@ -1,4 +1,4 @@
-**Project in MANITENCE**
+**Project in MANITENCE** | 06-10-2026
 
 # AI-Tools — mani operative per Agenti AI
 
