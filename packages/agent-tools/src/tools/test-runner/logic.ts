@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { resolveSafePath, type ToolContext } from "../../core/context.js";
+import { scrubEnv } from "../../core/proc.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -81,12 +82,15 @@ export async function testRunnerLogic(ctx: ToolContext, input: TestRunnerInput):
   let stderr = "";
   let code = 0;
   try {
-    const r = await execFileAsync(cmd, args, { cwd, timeout: timeoutMs, windowsHide: true, maxBuffer: 4_000_000 });
+    const r = await execFileAsync(cmd, args, { cwd, timeout: timeoutMs, windowsHide: true, maxBuffer: 4_000_000, env: scrubEnv(ctx) });
     stdout = String(r.stdout ?? "");
     stderr = String(r.stderr ?? "");
   } catch (e: unknown) {
-    const err = e as { stdout?: unknown; stderr?: unknown; code?: number; killed?: boolean };
+    const err = e as { stdout?: unknown; stderr?: unknown; code?: number | string; killed?: boolean; message?: string };
     if (err.killed) throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
+    if (err.code === "ENOENT" || /spawn .* ENOENT/.test(err.message ?? "")) {
+      throw Object.assign(new Error(`${cmd} not available here`), { code: "TOOL_MISSING" });
+    }
     stdout = String(err.stdout ?? "");
     stderr = String(err.stderr ?? "");
     code = Number(err.code ?? 1);

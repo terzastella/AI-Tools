@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { isDangerousCommand } from "../../core/policy.js";
+import { scrubEnv } from "../../core/proc.js";
 import { resolveSafePath, type ToolContext } from "../../core/context.js";
 
 const execFileAsync = promisify(execFile);
@@ -61,7 +62,7 @@ export async function bashExecLogic(ctx: ToolContext, input: BashExecInput): Pro
 
   ctx.logger.info("bash_exec", { cmd, args: args.length, cwd });
   try {
-    const { stdout, stderr } = await execFileAsync(cmd, args, { cwd, timeout: timeoutMs, windowsHide: true, maxBuffer: 2_000_000 });
+    const { stdout, stderr } = await execFileAsync(cmd, args, { cwd, timeout: timeoutMs, windowsHide: true, maxBuffer: 2_000_000, env: scrubEnv(ctx) });
     const o = trunc(String(stdout ?? ""));
     const e = trunc(String(stderr ?? ""));
     return { cmd, args, cwd, code: 0, stdout: o.text, stderr: e.text, truncated: o.cut || e.cut };

@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { isDangerousCommand } from "../../core/policy.js";
+import { scrubEnv } from "../../core/proc.js";
 import { resolveSafePath, type ToolContext } from "../../core/context.js";
 
 const execFileAsync = promisify(execFile);
@@ -47,9 +48,9 @@ export async function sandboxDockerLogic(ctx: ToolContext, input: SandboxDockerI
     mount = r.abs;
   }
 
-  // docker presente?
+  // docker presente? (DOCKER_HOST via ctx.envAllow se daemon remoto)
   try {
-    await execFileAsync("docker", ["info"], { timeout: 10_000, windowsHide: true });
+    await execFileAsync("docker", ["info"], { timeout: 10_000, windowsHide: true, env: scrubEnv(ctx) });
   } catch {
     throw Object.assign(new Error("docker not available (daemon spento o non installato)"), { code: "DOCKER_MISSING" });
   }
@@ -59,7 +60,7 @@ export async function sandboxDockerLogic(ctx: ToolContext, input: SandboxDockerI
     const { stdout, stderr } = await execFileAsync(
       "docker",
       ["run", "--rm", "--network", "none", "--memory", "512m", "--cpus", "1", "-v", `${mount}:/work`, "-w", "/work", image, ...cmd],
-      { cwd: ctx.cwd, timeout: timeoutMs, windowsHide: true, maxBuffer: 4_000_000 },
+      { cwd: ctx.cwd, timeout: timeoutMs, windowsHide: true, maxBuffer: 4_000_000, env: scrubEnv(ctx) },
     );
     const out = String(stdout);
     const err = String(stderr);

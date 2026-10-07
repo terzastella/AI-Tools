@@ -1,4 +1,4 @@
-import { htmlToText, parsePublicUrl } from "../../core/net-guard.js";
+import { htmlToText, parsePublicUrl, resolveRedirects } from "../../core/net-guard.js";
 import type { ToolContext } from "../../core/context.js";
 
 export interface WebFetchInput {
@@ -35,15 +35,29 @@ export async function webFetchLogic(ctx: ToolContext, input: WebFetchInput): Pro
   }
 
   ctx.logger.info("web_fetch", { url: u.hostname });
+  // redirect manuali rivalidati (mai follow cieco verso rete privata)
+  const final = await resolveRedirects(u, ctx, Math.min(timeoutMs, 15_000));
+  const headers = { "user-agent": "ai-tools/1.0 (+https://github.com/terzastella/AI-Tools)" };
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  const doGet = async (target: URL): Promise<Response> => {
+    try {
+      return await fetch(target, { signal: ctrl.signal, redirect: "manual", headers });
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name === "AbortError") throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
+      throw Object.assign(new Error(`fetch failed: ${e instanceof Error ? e.message : String(e)}`), { code: "FETCH_FAILED" });
+    }
+  };
   let res: Response;
   try {
-    res = await fetch(u, { signal: ctrl.signal, redirect: "follow", headers: { "user-agent": "ai-tools/1.0 (+https://github.com/terzastella/AI-Tools)" } });
-  } catch (e: unknown) {
-    clearTimeout(timer);
-    if (e instanceof Error && e.name === "AbortError") throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
-    throw Object.assign(new Error(`fetch failed: ${e instanceof Error ? e.message : String(e)}`), { code: "FETCH_FAILED" });
+    res = await doGet(final);
+    if (res.status >= 300 && res.status < 400) {
+      // il server cambia idea tra HEAD e GET: un hop extra, sempre rivalidato
+      const loc = res.headers.get("location");
+      if (!loc) throw Object.assign(new Error("redirect without location"), { code: "BAD_REDIRECT" });
+      const hop = await resolveRedirects(parsePublicUrl(new URL(loc, final).toString(), ctx), ctx, Math.min(timeoutMs, 15_000));
+      res = await doGet(hop);
+    }
   } finally {
     clearTimeout(timer);
   }

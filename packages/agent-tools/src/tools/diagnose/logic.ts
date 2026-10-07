@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import { promisify } from "node:util";
 import path from "node:path";
 import { resolveSafePath, type ToolContext } from "../../core/context.js";
+import { scrubEnv } from "../../core/proc.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -29,9 +30,9 @@ export interface DiagnoseOutput {
 
 export const DIAGNOSE_VERSION = "1.0.0";
 
-async function run(cmd: string, args: string[], cwd: string, timeout: number): Promise<{ stdout: string; stderr: string; code: number }> {
+async function run(cmd: string, args: string[], cwd: string, timeout: number, env: NodeJS.ProcessEnv): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    const { stdout, stderr } = await execFileAsync(cmd, args, { cwd, timeout, windowsHide: true, maxBuffer: 2_000_000 });
+    const { stdout, stderr } = await execFileAsync(cmd, args, { cwd, timeout, windowsHide: true, maxBuffer: 2_000_000, env });
     return { stdout: String(stdout), stderr: String(stderr), code: 0 };
   } catch (e: unknown) {
     const err = e as { stdout?: unknown; stderr?: unknown; code?: number };
@@ -108,22 +109,23 @@ export async function diagnoseLogic(ctx: ToolContext, input: DiagnoseInput): Pro
   // Motivo: i test girano in tmp/ senza node_modules, npx lì non trova typescript.
   const projectTsc = path.resolve(process.cwd(), "node_modules/typescript/bin/tsc");
   let tsc: { stdout: string; stderr: string; code: number };
+  const env = scrubEnv(ctx);
   try {
     await fs.stat(projectTsc);
-    tsc = await run("node", [projectTsc, "--noEmit", "--pretty", "false"], ctx.cwd, timeout);
+    tsc = await run("node", [projectTsc, "--noEmit", "--pretty", "false"], ctx.cwd, timeout, env);
   } catch {
-    tsc = await run("npx", ["tsc", "--noEmit", "--pretty", "false"], ctx.cwd, timeout);
+    tsc = await run("npx", ["tsc", "--noEmit", "--pretty", "false"], ctx.cwd, timeout, env);
   }
   const tscIssues = parseTsc(tsc.stdout + "\n" + tsc.stderr, ctx.cwd);
 
   // 2. eslint se disponibile (best-effort, mai blocca)
   let eslintIssues: DiagnoseIssue[] = [];
   let ranEslint = false;
-  const eslintCheck = await run("npx", ["--no-install", "eslint", "--version"], ctx.cwd, 8000);
+  const eslintCheck = await run("npx", ["--no-install", "eslint", "--version"], ctx.cwd, 8000, env);
   if (eslintCheck.code === 0) {
     ranEslint = true;
     const scope = rawPaths.join(" ");
-    const res = await run("npx", ["eslint", ...rawPaths, "-f", "json"], ctx.cwd, timeout).catch(() => ({ stdout: "[]", stderr: "", code: 1 }));
+    const res = await run("npx", ["eslint", ...rawPaths, "-f", "json"], ctx.cwd, timeout, env).catch(() => ({ stdout: "[]", stderr: "", code: 1 }));
     void scope;
     eslintIssues = parseEslintJson(res.stdout || "[]");
   }
@@ -133,7 +135,7 @@ export async function diagnoseLogic(ctx: ToolContext, input: DiagnoseInput): Pro
   if (runTests) {
     const args = ["vitest", "run"];
     if (input.testPattern) args.push(input.testPattern);
-    const res = await run("npx", args, ctx.cwd, timeout);
+    const res = await run("npx", args, ctx.cwd, timeout, env);
     vitestIssues = parseVitest(res.stdout + "\n" + res.stderr);
   }
 

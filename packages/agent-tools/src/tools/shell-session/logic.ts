@@ -1,5 +1,6 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { isDangerousCommand } from "../../core/policy.js";
+import { scrubEnv } from "../../core/proc.js";
 import { resolveSafePath, type ToolContext } from "../../core/context.js";
 
 export interface ShellSessionInput {
@@ -126,7 +127,7 @@ export async function shellSessionLogic(ctx: ToolContext, input: ShellSessionInp
     }
 
     const id = newId();
-    const child = spawn(cmd, args, { cwd, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
+    const child = spawn(cmd, args, { cwd, windowsHide: true, stdio: ["ignore", "pipe", "pipe"], env: scrubEnv(ctx) });
     const s: Session = { id, cmd: full, cwd, child, buf: "", running: true, code: null, startedAt: Date.now() };
     child.stdout?.on("data", (d) => append(s, String(d)));
     child.stderr?.on("data", (d) => append(s, String(d)));

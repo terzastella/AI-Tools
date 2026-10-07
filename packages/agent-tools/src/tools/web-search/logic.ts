@@ -1,4 +1,4 @@
-import { parsePublicUrl } from "../../core/net-guard.js";
+import { parsePublicUrl, resolveRedirects } from "../../core/net-guard.js";
 import type { ToolContext } from "../../core/context.js";
 
 export interface WebSearchInput {
@@ -59,18 +59,23 @@ export async function webSearchLogic(ctx: ToolContext, input: WebSearchInput): P
   const base = parsePublicUrl(endpoint, ctx);
 
   ctx.logger.info("web_search", { query: query.slice(0, 80) });
-  const target = new URL(base);
-  target.searchParams.set("q", query);
+  // endpoint rivalidato (mai follow cieco): i POST non seguono redirect da soli
+  const final = await resolveRedirects(new URL(base), ctx, Math.min(timeoutMs, 15_000));
+  final.searchParams.set("q", query);
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   let html: string;
   try {
-    const res = await fetch(target, {
+    const res = await fetch(final, {
       signal: ctrl.signal,
+      redirect: "manual",
       headers: { "user-agent": "ai-tools/1.0 (+https://github.com/terzastella/AI-Tools)", "content-type": "application/x-www-form-urlencoded" },
       method: "POST",
       body: `q=${encodeURIComponent(query)}`,
     });
+    if (res.status >= 300 && res.status < 400) {
+      throw Object.assign(new Error("search endpoint redirected on POST (cambia endpoint)"), { code: "BAD_REDIRECT" });
+    }
     if (!res.ok) throw Object.assign(new Error(`http ${res.status}`), { code: "HTTP_ERROR" });
     html = await res.text();
   } catch (e: unknown) {

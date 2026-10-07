@@ -2,6 +2,7 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { promises as fs } from "node:fs";
 import readline from "node:readline";
 import { isDangerousCommand } from "../../core/policy.js";
+import { scrubEnv } from "../../core/proc.js";
 import { resolveSafePath, type ToolContext } from "../../core/context.js";
 
 export interface McpCallInput {
@@ -78,7 +79,12 @@ class McpStdio {
   ) {
     const full = [command, ...args].join(" ");
     if (isDangerousCommand(full)) fail("POLICY_DENIED", "dangerous mcp server command blocked");
-    this.child = spawn(command, args, { cwd: ctx.cwd, env: { ...process.env, ...env }, windowsHide: true, stdio: ["pipe", "pipe", "pipe"] });
+    // solo env esplicita della config + base scrubbed: mai tutto process.env
+    const extra: Record<string, string> = {};
+    for (const [k, v] of Object.entries(env)) {
+      if (typeof v === "string") extra[k] = v;
+    }
+    this.child = spawn(command, args, { cwd: ctx.cwd, env: scrubEnv(ctx, extra), windowsHide: true, stdio: ["pipe", "pipe", "pipe"] });
     const rl = readline.createInterface({ input: this.child.stdout!, crlfDelay: Infinity });
     rl.on("line", (line) => this.onLine(line));
     this.child.on("error", (e) => this.onError(e));

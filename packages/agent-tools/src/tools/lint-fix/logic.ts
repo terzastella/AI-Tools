@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { resolveSafePath, type ToolContext } from "../../core/context.js";
+import { scrubEnv } from "../../core/proc.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -42,6 +43,7 @@ export async function lintFixLogic(ctx: ToolContext, input: LintFixInput): Promi
       timeout: timeoutMs,
       windowsHide: true,
       maxBuffer: 2_000_000,
+      env: scrubEnv(ctx),
     });
     return { paths: rels, stdout: String(stdout).slice(0, 10_000), stderr: String(stderr).slice(0, 5_000), code: 0 };
   } catch (e: unknown) {

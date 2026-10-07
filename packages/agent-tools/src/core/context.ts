@@ -4,6 +4,7 @@
  * per bloccare traversal fuori cwd.
  */
 import path from "node:path";
+import { realpathSync } from "node:fs";
 import type { Approver } from "./approval.js";
 
 export interface Logger {
@@ -44,20 +45,51 @@ export interface ToolContext {
   budgetLimit?: number;
   /** Id sessione agente: finisce in audit per raggruppare le call. Opzionale. */
   sessionId?: string;
+  /**
+   * Nomi di env extra permessi ai processi figli (oltre la allowlist minima).
+   * I secret passano solo da qui o da config esplicite, mai da ereditarietà cieca.
+   */
+  envAllow?: string[];
 }
 
 export function createContext(cwd: string = process.cwd(), logger: Logger = noopLogger): ToolContext {
   return { cwd: path.resolve(cwd), logger };
 }
 
-/** Risolve target contro ctx.cwd e rifiuta escape (../, assoluti fuori cwd, drive diversi su win). */
+/** Risolve gli antenati esistenti via realpath e riattacca il resto: smaschera i symlink. */
+function realBase(abs: string): string {
+  let cur = abs;
+  const rest: string[] = [];
+  for (;;) {
+    try {
+      return path.join(realpathSync(cur), ...rest.reverse());
+    } catch {
+      const parent = path.dirname(cur);
+      if (parent === cur) return abs;
+      rest.push(path.basename(cur));
+      cur = parent;
+    }
+  }
+}
+
+/**
+ * Risolve target contro ctx.cwd e rifiuta escape (../, assoluti fuori cwd, drive diversi su win).
+ * Risolve anche i symlink (realpath): un link dentro cwd che punta fuori viene rifiutato.
+ * Nota: resta una race TOCTOU microscopica tra check e uso, come in ogni sandbox path-based.
+ */
 export function resolveSafePath(ctx: ToolContext, target: string): { ok: true; abs: string } | { ok: false; attempted: string } {
-  const cwdResolved = path.resolve(ctx.cwd);
-  const abs = path.resolve(cwdResolved, target);
-  const rel = path.relative(cwdResolved, abs);
+  let cwdReal: string;
+  try {
+    cwdReal = realpathSync(path.resolve(ctx.cwd));
+  } catch {
+    cwdReal = path.resolve(ctx.cwd);
+  }
+  const abs = path.resolve(cwdReal, target);
+  const realAbs = realBase(abs);
+  const rel = path.relative(cwdReal, realAbs);
   // rel === '' => stesso cwd, ok. Altrimenti non deve iniziare con .. né essere assoluto.
   if (rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel))) {
-    return { ok: true, abs };
+    return { ok: true, abs: realAbs };
   }
-  return { ok: false, attempted: abs };
+  return { ok: false, attempted: realAbs };
 }

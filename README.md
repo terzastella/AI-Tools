@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node: 20+](https://img.shields.io/badge/node-20+-blue.svg)](packages/agent-tools/package.json)
 [![CI](https://github.com/terzastella/AI-Tools/actions/workflows/ci.yml/badge.svg)](https://github.com/terzastella/AI-Tools/actions)
-[![Version](https://img.shields.io/badge/version-0.16.0-orange.svg)](packages/agent-tools/package.json)
+[![Version](https://img.shields.io/badge/version-0.17.0-orange.svg)](packages/agent-tools/package.json)
 
 *🇮🇹 Italiano? Leggi [README-IT.md](README-IT.md) · Machine catalog: [catalog/tools.json](catalog/tools.json)*
 
@@ -241,4 +241,4 @@ CI runs install + typecheck + build + test on every push ([workflow](.github/wor
 
 ## Status
 
-**v0.16.0** — 52 tools in 8 phases: base → lock → exec+natives → MCP → dev loop → knowledge → senses → brain. Full history in `git log`. MIT ([LICENSE](LICENSE)).
+**v0.17.0** — 52 tool hardened (symlink/realpath, env scrubbed, redirect rivalidati), 8 fasi + hardening. Full history in `git log`. MIT ([LICENSE](LICENSE)).

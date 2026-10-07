@@ -1,7 +1,7 @@
 {
   "name": "ai-toolkit",
-  "version": "0.16.0",
-  "description": "AI-Tools — 52 tool con approval gate accept/deny + MCP + LSP + budget. Privato, addon plain + policy/audit.",
+  "version": "0.17.0",
+  "description": "AI-Tools — 52 tool hardened (symlink, env, redirect) + approval gate + MCP. Privato, addon plain + policy/audit.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.js",

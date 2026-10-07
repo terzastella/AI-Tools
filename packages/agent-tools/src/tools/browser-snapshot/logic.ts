@@ -1,6 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { htmlToText, parsePublicUrl } from "../../core/net-guard.js";
+import { htmlToText, parsePublicUrl, resolveRedirects } from "../../core/net-guard.js";
+import { scrubEnv } from "../../core/proc.js";
 import type { ToolContext } from "../../core/context.js";
 
 const execFileAsync = promisify(execFile);
@@ -61,12 +62,14 @@ export async function browserSnapshotLogic(ctx: ToolContext, input: BrowserSnaps
   }
 
   ctx.logger.info("browser_snapshot", { url: u.hostname, browser });
+  // Chrome segue i redirect da solo: pre-risolvi l'URL finale rivalidando ogni hop
+  const final = await resolveRedirects(u, ctx, Math.min(timeoutMs, 15_000));
   let html: string;
   try {
     const { stdout } = await execFileAsync(
       browser,
-      ["--headless", "--disable-gpu", "--no-sandbox", "--virtual-time-budget=5000", "--dump-dom", u.toString()],
-      { timeout: timeoutMs, windowsHide: true, maxBuffer: 8_000_000 },
+      ["--headless", "--disable-gpu", "--no-sandbox", "--virtual-time-budget=5000", "--dump-dom", final.toString()],
+      { timeout: timeoutMs, windowsHide: true, maxBuffer: 8_000_000, env: scrubEnv(ctx) },
     );
     html = String(stdout);
   } catch (e: unknown) {

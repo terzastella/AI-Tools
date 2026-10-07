@@ -4,7 +4,8 @@
  */
 import type { ToolContext } from "./context.js";
 
-function isPrivateIp(host: string): boolean {
+/** Export per test: vero se host loopback/rete privata/metadata (case-insensitive). */
+export function isPrivateIp(host: string): boolean {
   const h = host.toLowerCase();
   if (h === "localhost" || h === "ip6-localhost") return true;
   if (h === "::1" || h === "[::1]") return true;
@@ -55,4 +56,45 @@ export function htmlToText(html: string): string {
     .map((l) => l.replace(/[ \t]+/g, " ").trim())
     .filter((l) => l.length > 0)
     .join("\n");
+}
+
+/**
+ * Segue i redirect rivalidando OGNI hop contro la policy (niente follow cieco:
+ * un redirect verso rete privata/metadata viene bloccato). Max 3 hop.
+ * Ritorna l'URL finale già validato.
+ */
+export async function resolveRedirects(start: URL, ctx: ToolContext, timeoutMs: number, maxHops = 3): Promise<URL> {
+  let current = start;
+  for (let hop = 0; hop <= maxHops; hop++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    let res: Response;
+    try {
+      res = await fetch(current, { method: "HEAD", signal: ctrl.signal, redirect: "manual" });
+    } catch (e: unknown) {
+      clearTimeout(timer);
+      if (e instanceof Error && e.name === "AbortError") throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
+      throw Object.assign(new Error(`fetch failed: ${e instanceof Error ? e.message : String(e)}`), { code: "FETCH_FAILED" });
+    } finally {
+      clearTimeout(timer);
+    }
+    if (res.status < 300 || res.status >= 400 || hop === maxHops) {
+      if (hop === maxHops && res.status >= 300 && res.status < 400) {
+        throw Object.assign(new Error("too many redirects (max 3)"), { code: "TOO_MANY_REDIRECTS" });
+      }
+      return current;
+    }
+    const loc = res.headers.get("location");
+    if (!loc) return current;
+    let next: URL;
+    try {
+      next = new URL(loc, current);
+    } catch {
+      throw Object.assign(new Error("bad redirect location"), { code: "BAD_REDIRECT" });
+    }
+    // rivalida ogni hop: protocollo + host privati
+    parsePublicUrl(next.toString(), ctx);
+    current = next;
+  }
+  throw Object.assign(new Error("too many redirects (max 3)"), { code: "TOO_MANY_REDIRECTS" });
 }
