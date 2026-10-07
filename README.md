@@ -1,157 +1,163 @@
-# AI-Tools — mani operative per Agenti AI
+# AI-Tools — hands for AI agents
 
-52 tool TypeScript reali (`ToolDefinition` + `registry.register`) che danno a un modello le capacità che da solo non ha: file, terminale, git, web, memoria, LSP, MCP, budget. MIT, di `terzastella`.
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Node: 20+](https://img.shields.io/badge/node-20+-blue.svg)](packages/agent-tools/package.json)
+[![CI](https://github.com/terzastella/AI-Tools/actions/workflows/ci.yml/badge.svg)](https://github.com/terzastella/AI-Tools/actions)
 
-Spiegazione semplice in `docs/OVERVIEW.md`. Catalogo macchina in `catalog/tools.json`.
+> 🇮🇹 Italiano? Leggi [README-IT.md](README-IT.md).
 
-## Le 3 regole
+52 real TypeScript tools (`ToolDefinition` + `registry.register`) that give a model the capabilities it lacks on its own: files, terminal, git, web, memory, LSP, MCP, budget. MIT, by `terzastella`.
 
-- **Stretta + sempre accept/deny umano** — letture libere, scritture ed esecuzioni chiedono sempre (`src/core/approval.ts` + `guarded.ts`). Comandi pericolosi bloccati anche con accept.
-- **Web anche via MCP** — `web_fetch/web_search` diretti + `mcp_call` per server esterni standard.
-- **Nativo, zero dipendenze runtime** — solo Node 20+, test con vitest.
+Plain-English guide in `docs/OVERVIEW.md`. Machine-readable catalog in `catalog/tools.json`.
 
-## Uso rapido
+## The 3 rules
+
+- **Strict + always ask a human** — reads are free, writes and executions always ask (`src/core/approval.ts` + `guarded.ts`). Dangerous commands blocked even on accept.
+- **Web directly and via MCP** — direct `web_fetch/web_search` + `mcp_call` for standard external servers.
+- **Native, zero runtime dependencies** — Node 20+ only, tests with vitest.
+
+## Quick start
 
 ```ts
-import { toolkitDefinitions } from "ai-toolkit"; // o singoli: writerDefinition, ...
+import { toolkitDefinitions } from "ai-toolkit"; // or singles: writerDefinition, ...
 for (const def of toolkitDefinitions) registry.register(def);
 ```
 
-Sicuro di default:
+Secure by default:
 
 ```ts
 import { wrapDefinition } from "ai-toolkit";
 import { standardPolicy } from "ai-toolkit";
 registry.register(wrapDefinition(writerDefinition, { policy: standardPolicy, audit }));
-// ctx.approver = async () => "accept" | "deny"  <- il tuo bottone umano
+// ctx.approver = async () => "accept" | "deny"  <- your human button
 ```
 
-Esempi in `packages/agent-tools/examples/` (`register.ts`, `secure-register.ts`, `addon.json`, `mcp-servers.json`, `opencode.json`).
+Examples in `packages/agent-tools/examples/` (`register.ts`, `secure-register.ts`, `addon.json`, `mcp-servers.json`, `opencode.json`).
 
-## Usarli dentro opencode (o agenti MCP)
+## Use inside opencode (or MCP agents)
 
-Niente codice: server MCP stdio in `servers/ai-tools-mcp/` che espone i 52 tool.
+No code: stdio MCP server in `servers/ai-tools-mcp/` exposing all 52 tools.
 
 ```sh
-cd packages/agent-tools && pnpm build   # serve dist/
+cd packages/agent-tools && pnpm build   # dist/ needed
 ```
 
- poi copia `examples/opencode.json` nel tuo `opencode.json` (cambia i due path) — glob `ai-tools_*` già su `ask`.
-Piano di test con 5 task in `docs/OPENCODE-TEST.md`. Dettagli server in `servers/ai-tools-mcp/README.md`.
+Then copy `examples/opencode.json` into your `opencode.json` (change the two paths) — glob `ai-tools_*` already on `ask`.
+5-task test plan in `docs/OPENCODE-TEST.md`. Server details in `servers/ai-tools-mcp/README.md`.
 
-## I 52 tool
+## The 52 tools
 
-### File (14)
+### Files (14)
 
-| Tool | Fa |
+| Tool | Does |
 |---|---|
-| `create_file` | Crea file atomico |
-| `edit_file` | Modifica chirurgica (replace/insert/delete) |
-| `edit_many` | Batch atomico multi-file |
-| `apply_patch` | Unified diff multi-hunk |
-| `read_file` | Legge a pagine (offset/limit) |
-| `list_directory` | Elenca cartelle |
-| `find_files` | Glob per nome |
+| `create_file` | Atomic file creation |
+| `edit_file` | Surgical edits (replace/insert/delete) |
+| `edit_many` | Atomic multi-file batch |
+| `apply_patch` | Multi-hunk unified diff |
+| `read_file` | Paged reads (offset/limit) |
+| `list_directory` | Lists directories |
+| `find_files` | Glob by name |
 | `move_file` | move/copy/delete |
-| `rename_symbol` | Rename whole-word |
-| `history` | Versioni file in `.agent/history` |
-| `file_outline` | Indice simboli di un file |
-| `format_check` | Controlla stile (read-only) |
-| `check_config` | Valida package.json/tsconfig |
-| `image_read` | png/jpg/webp/gif/pdf → base64 (+testo best-effort PDF) |
+| `rename_symbol` | Whole-word rename |
+| `history` | File versions in `.agent/history` |
+| `file_outline` | Symbol index of a file |
+| `format_check` | Style check (read-only) |
+| `check_config` | Validates package.json/tsconfig |
+| `image_read` | png/jpg/webp/gif/pdf → base64 (+best-effort PDF text) |
 
-### Cerca e capisci codice (9)
+### Find and understand code (9)
 
-| Tool | Fa |
+| Tool | Does |
 |---|---|
-| `search_text` | Regex nei file |
-| `search_pro` | Ricerca con ranking |
-| `prepare_context` | Contesto per goal |
-| `find_references` | Chi usa questo simbolo (regex) |
-| `go_to_definition` | Dov'è definito (regex+import) |
-| `inspect_symbol` | Dettaglio simbolo |
-| `import_map` | Chi importa cosa |
-| `ast_search` | Simboli strutturali (AST TS o regex mirati) |
-| `lsp_bridge` | Vero tsserver: hover, references, rename dry |
+| `search_text` | Regex across files |
+| `search_pro` | Ranked search |
+| `prepare_context` | Context for a goal |
+| `find_references` | Who uses this symbol (regex) |
+| `go_to_definition` | Where it is defined (regex+imports) |
+| `inspect_symbol` | Symbol details |
+| `import_map` | Who imports what |
+| `ast_search` | Structural symbols (TS AST or targeted regex) |
+| `lsp_bridge` | Real tsserver: hover, references, dry rename |
 
-### Esegui (5)
+### Execute (5)
 
-| Tool | Fa |
+| Tool | Does |
 |---|---|
-| `bash_exec` | Un comando, senza shell, con timeout |
-| `shell_session` | Processi lunghi: start/poll/kill/list |
-| `test_runner` | vitest/pytest/npm → pass/fail strutturati |
-| `lint_fix` | `eslint --fix` gated |
-| `sandbox_docker` | Comando in container isolato (no rete) |
+| `bash_exec` | One command, no shell, with timeout |
+| `shell_session` | Long processes: start/poll/kill/list |
+| `test_runner` | vitest/pytest/npm → structured pass/fail |
+| `lint_fix` | Gated `eslint --fix` |
+| `sandbox_docker` | Command in isolated container (no network) |
 
 ### Git (2)
 
-| Tool | Fa |
+| Tool | Does |
 |---|---|
-| `git` | status/diff/log/branch/blame (solo lettura) |
-| `git_write` | add/commit/branch/checkout/stash (mai push: lo fai tu dall'App) |
+| `git` | status/diff/log/branch/blame (read-only) |
+| `git_write` | add/commit/branch/checkout/stash (never push: you do that in the App) |
 
-### Ragiona e organizza (13)
+### Reason and organize (13)
 
-| Tool | Fa |
+| Tool | Does |
 |---|---|
-| `todo` | Lista passi in `.agent/todos.json` |
-| `ask_user` | Domanda all'umano con opzioni |
-| `delegate_task` | Planning-only (NON chiama LLM — vedi sotto) |
-| `run_subagent` | Sub-agent vero con contesto isolato (Ollama/echo) |
-| `refactor_plan` | Piano eseguibile, non esegue |
-| `review_code` | Revisione con regole + diagnose |
-| `debug_error` | Da stack trace a candidati + fix |
-| `diagnose` | tsc+eslint+vitest aggregati |
-| `typecheck_file` | tsc filtrato |
-| `generate_docs` | Docs da codice |
-| `create_skill` | Scaffold di un nuovo tool |
-| `schedule_cron` | Promemoria schedulati (add/list/remove/due) |
-| `budget_status` | Contatore token globale + tetto |
+| `todo` | Step list in `.agent/todos.json` |
+| `ask_user` | Question to the human with options |
+| `delegate_task` | Planning-only (does NOT call LLMs — see below) |
+| `run_subagent` | Real sub-agent with isolated context (Ollama/echo) |
+| `refactor_plan` | Executable plan, doesn't execute |
+| `review_code` | Rule-based review + diagnose |
+| `debug_error` | Stack trace to candidates + fix |
+| `diagnose` | Aggregated tsc+eslint+vitest |
+| `typecheck_file` | Filtered tsc |
+| `generate_docs` | Docs from code |
+| `create_skill` | New-tool scaffold |
+| `schedule_cron` | Scheduled reminders (add/list/remove/due) |
+| `budget_status` | Global token counter + cap |
 
-### Testo e RAG (3)
+### Text and RAG (3)
 
-| Tool | Fa |
+| Tool | Does |
 |---|---|
-| `count_tokens` | Stima token chars/4 |
-| `chunk_text` | Chunk con overlap |
-| `pack_context` | File → contesto con budget |
+| `count_tokens` | Token estimate chars/4 |
+| `chunk_text` | Overlapped chunks |
+| `pack_context` | Files → context with budget |
 
-### Web e integrazioni (4)
+### Web and integrations (4)
 
-| Tool | Fa |
+| Tool | Does |
 |---|---|
-| `web_fetch` | Pagina pubblica → testo (anti-SSRF) |
-| `web_search` | Cerca senza chiavi (best-effort) |
-| `browser_snapshot` | Pagina renderizzata via Chrome/Edge headless |
-| `mcp_call` | Chiama server MCP via stdio |
+| `web_fetch` | Public page → text (anti-SSRF) |
+| `web_search` | Keyless search (best-effort) |
+| `browser_snapshot` | Headless Chrome/Edge rendered page |
+| `mcp_call` | Calls MCP servers over stdio |
 
-### Memoria e igiene (2)
+### Memory and hygiene (2)
 
-| Tool | Fa |
+| Tool | Does |
 |---|---|
-| `memory_store` | Memoria locale `.agent/memory` (put/get/search) |
-| `env_secrets` | Check senza rivelare + redact (read-only) |
+| `memory_store` | Local memory in `.agent/memory` (put/get/search) |
+| `env_secrets` | Check without revealing + redact (read-only) |
 
-> `delegate_task` è planning deterministico (non chiama modelli). Per far ragionare davvero un sotto-agente usa `run_subagent`.
+> `delegate_task` is deterministic planning (calls no models). For a sub-agent that really reasons, use `run_subagent`.
 
-Dettaglio di ognuno in `packages/agent-tools/docs/tools/*.md`.
+Details for each in `packages/agent-tools/docs/tools/*.md`.
 
-## Sicurezza in breve
+## Safety in short
 
-- Fail-closed: deny vince sempre, senza allow esplicito niente passa (`src/core/policy.ts`).
-- `write/execute` chiedono `accept | deny`; `deny` → `NEED_APPROVAL`, niente toccato.
-- Audit append-only in `.agent/audit/*.jsonl` con `sessionId`.
-- Budget token globale con tetto opzionale (`BUDGET_EXCEEDED`).
-- Path sempre dentro cwd (anti-traversal), URL privati bloccati, secrets mai nei log.
+- Fail-closed: deny always wins, nothing passes without an explicit allow (`src/core/policy.ts`).
+- `write/execute` ask `accept | deny`; `deny` → `NEED_APPROVAL`, nothing touched.
+- Append-only audit in `.agent/audit/*.jsonl` with `sessionId`.
+- Global token budget with optional cap (`BUDGET_EXCEEDED`).
+- Paths always inside cwd (anti-traversal), private URLs blocked, never secrets in logs.
 
-## Privacy: cosa resta sul tuo PC e cosa no
+## Privacy: what stays on your PC
 
-- Nel repo pubblico finiscono solo codice, docs e test. Mai contenuti tuoi.
-- Tutto ciò che i tool scrivono mentre lavorano (`audit`, `history`, `todos`, `memory`, `schedule`, `budget`) vive in `.agent/`, ignorata da git.
-- Gli output includono path del tuo disco (es. `read_file.abs`) e gli audit salvano il `cwd`: restano locali, non committare mai `.agent/`.
+- The public repo only gets code, docs and tests. Never your content.
+- Everything tools write while working (`audit`, `history`, `todos`, `memory`, `schedule`, `budget`) lives in `.agent/`, ignored by git.
+- Outputs include your disk paths (e.g. `read_file.abs`) and audits store the `cwd`: they stay local, never commit `.agent/`.
 
-## Validazione
+## Validation
 
 ```sh
 cd packages/agent-tools
@@ -160,8 +166,8 @@ pnpm typecheck
 pnpm test
 ```
 
-CI su ogni push (`.github/workflows/ci.yml`): install + typecheck + test.
+CI on every push (`.github/workflows/ci.yml`): install + typecheck + test.
 
-## Stato
+## Status
 
-v0.16.0 — 52 tool, 8 fasi (base → lucchetto → exec+nativi → MCP → loop dev → conoscenza → sensi → cervello). Storia in `git log`.
+v0.16.0 — 52 tools, 8 phases (base → lock → exec+natives → MCP → dev loop → knowledge → senses → brain). History in `git log`.
