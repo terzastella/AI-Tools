@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "ai-tools": {
+      "type": "local",
+      "command": ["node", "<PATH-REPO>/servers/ai-tools-mcp/server.mjs"],
+      "cwd": "<PATH-TUO-PROGETTO>",
+      "environment": {
+        "AI_TOOLS_CWD": "<PATH-TUO-PROGETTO>"
+      },
+      "enabled": true,
+      "timeout": 30000
+    }
+  },
+  "permission": {
+    "ai-tools_*": "ask"
+  }
+}

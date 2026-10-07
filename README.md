@@ -28,7 +28,18 @@ registry.register(wrapDefinition(writerDefinition, { policy: standardPolicy, aud
 // ctx.approver = async () => "accept" | "deny"  <- il tuo bottone umano
 ```
 
-Esempi in `packages/agent-tools/examples/` (`register.ts`, `secure-register.ts`, `addon.json`, `mcp-servers.json`).
+Esempi in `packages/agent-tools/examples/` (`register.ts`, `secure-register.ts`, `addon.json`, `mcp-servers.json`, `opencode.json`).
+
+## Usarli dentro opencode (o agenti MCP)
+
+Niente codice: server MCP stdio in `servers/ai-tools-mcp/` che espone i 52 tool.
+
+```sh
+cd packages/agent-tools && pnpm build   # serve dist/
+```
+
+ poi copia `examples/opencode.json` nel tuo `opencode.json` (cambia i due path) — glob `ai-tools_*` già su `ask`.
+Piano di test con 5 task in `docs/OPENCODE-TEST.md`. Dettagli server in `servers/ai-tools-mcp/README.md`.
 
 ## I 52 tool
 

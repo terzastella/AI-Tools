@@ -63,6 +63,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit",
+    "pretest": "pnpm build",
     "test": "vitest run",
     "test:watch": "vitest",
     "bench": "vitest bench --run tests/bench",
