@@ -1,12 +1,12 @@
 # AGENTS.md — AI-Tools
 
-Lavoriamo SOLO dentro `D:\Projects\AI-Toolkit\AI-Tools`.
-NON toccare `../ai-skills` mai.
+Lavoriamo SOLO dentro la root di questa repo (path relativi, mai assoluti).
 
 Struttura:
-- `packages/agent-tools/src/core/` — tipi, policy, approval, audit, guarded
-- `packages/agent-tools/src/tools/*/` — 31 tool esistenti
+- `packages/agent-tools/src/core/` — tipi, policy, approval, audit, guarded, budget, model-router
+- `packages/agent-tools/src/tools/*/` — 52 tool
 - `packages/py-ref/` — riferimento Python, non eseguire come tool
+- `servers/ai-tools-mcp/` — server MCP stdio
 - `catalog/tools.json` — lista tool, generata
 - `docs/` — spiegazioni semplici
 

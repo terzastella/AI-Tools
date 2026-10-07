@@ -147,6 +147,12 @@ Dettaglio di ognuno in `packages/agent-tools/docs/tools/*.md`.
 - Budget token globale con tetto opzionale (`BUDGET_EXCEEDED`).
 - Path sempre dentro cwd (anti-traversal), URL privati bloccati, secrets mai nei log.
 
+## Privacy: cosa resta sul tuo PC e cosa no
+
+- Nel repo pubblico finiscono solo codice, docs e test. Mai contenuti tuoi.
+- Tutto ciò che i tool scrivono mentre lavorano (`audit`, `history`, `todos`, `memory`, `schedule`, `budget`) vive in `.agent/`, ignorata da git.
+- Gli output includono path del tuo disco (es. `read_file.abs`) e gli audit salvano il `cwd`: restano locali, non committare mai `.agent/`.
+
 ## Validazione
 
 ```sh
