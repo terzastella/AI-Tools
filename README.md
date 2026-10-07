@@ -2,7 +2,7 @@
 
 # AI-Tools — mani operative per Agenti AI
 
-52 tool TypeScript reali (`ToolDefinition` + `registry.register`) che danno a un modello le capacità che da solo non ha: file, terminale, git, web, memoria, LSP, MCP, budget. Repo privata di `terzastella`.
+52 tool TypeScript reali (`ToolDefinition` + `registry.register`) che danno a un modello le capacità che da solo non ha: file, terminale, git, web, memoria, LSP, MCP, budget. MIT, di `terzastella`.
 
 Spiegazione semplice in `docs/OVERVIEW.md`. Catalogo macchina in `catalog/tools.json`.
 

@@ -67,7 +67,7 @@ export async function webSearchLogic(ctx: ToolContext, input: WebSearchInput): P
   try {
     const res = await fetch(target, {
       signal: ctrl.signal,
-      headers: { "user-agent": "ai-tools/1.0 (+private agent)", "content-type": "application/x-www-form-urlencoded" },
+      headers: { "user-agent": "ai-tools/1.0 (+https://github.com/terzastella/AI-Tools)", "content-type": "application/x-www-form-urlencoded" },
       method: "POST",
       body: `q=${encodeURIComponent(query)}`,
     });

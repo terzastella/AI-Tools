@@ -39,7 +39,7 @@ export async function webFetchLogic(ctx: ToolContext, input: WebFetchInput): Pro
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   let res: Response;
   try {
-    res = await fetch(u, { signal: ctrl.signal, redirect: "follow", headers: { "user-agent": "ai-tools/1.0 (+private agent)" } });
+    res = await fetch(u, { signal: ctrl.signal, redirect: "follow", headers: { "user-agent": "ai-tools/1.0 (+https://github.com/terzastella/AI-Tools)" } });
   } catch (e: unknown) {
     clearTimeout(timer);
     if (e instanceof Error && e.name === "AbortError") throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
