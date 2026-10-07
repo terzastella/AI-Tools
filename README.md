@@ -1,53 +1,95 @@
-# AI-Tools — hands for AI agents
+<div align="center">
+
+# 🛠️ AI-Tools
+
+**52 safety-first tools that give any AI model hands.**
+
+*Files, terminal, git, web, memory, LSP, MCP and budget — one registry, zero runtime dependencies.*
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node: 20+](https://img.shields.io/badge/node-20+-blue.svg)](packages/agent-tools/package.json)
 [![CI](https://github.com/terzastella/AI-Tools/actions/workflows/ci.yml/badge.svg)](https://github.com/terzastella/AI-Tools/actions)
+[![Version](https://img.shields.io/badge/version-0.16.0-orange.svg)](packages/agent-tools/package.json)
 
-> 🇮🇹 Italiano? Leggi [README-IT.md](README-IT.md).
+*🇮🇹 Italiano? Leggi [README-IT.md](README-IT.md) · Machine catalog: [catalog/tools.json](catalog/tools.json)*
 
-52 real TypeScript tools (`ToolDefinition` + `registry.register`) that give a model the capabilities it lacks on its own: files, terminal, git, web, memory, LSP, MCP, budget. MIT, by `terzastella`.
+</div>
 
-Plain-English guide in `docs/OVERVIEW.md`. Machine-readable catalog in `catalog/tools.json`.
+---
 
-## The 3 rules
+## Why another toolkit?
 
-- **Strict + always ask a human** — reads are free, writes and executions always ask (`src/core/approval.ts` + `guarded.ts`). Dangerous commands blocked even on accept.
-- **Web directly and via MCP** — direct `web_fetch/web_search` + `mcp_call` for standard external servers.
-- **Native, zero runtime dependencies** — Node 20+ only, tests with vitest.
+Most tool collections bolt safety on afterwards. Here it is the foundation:
+
+- 🔒 **Approval gate built in** — reads are free, every write and execution asks a human (`accept | deny`). Deny means `NEED_APPROVAL` and nothing is touched.
+- 📝 **Audit by default** — every call is logged append-only with session id. You can always reconstruct what the agent did.
+- ↔️ **MCP both ways** — a client to call external servers *and* a server exposing all 52 tools to opencode and MCP-compatible agents.
+- 📦 **Zero runtime dependencies** — Node 20+ only. TypeScript strict, tested with vitest, CI on every push.
+
+## Contents
+
+- [Quick start](#quick-start)
+- [Use inside opencode](#use-inside-opencode-or-any-mcp-agent)
+- [The 52 tools](#the-52-tools)
+- [How safety works](#how-safety-works)
+- [Privacy](#privacy-what-stays-on-your-pc)
+- [Validation](#validation)
+- [Status](#status)
 
 ## Quick start
 
+Plain:
+
 ```ts
-import { toolkitDefinitions } from "ai-toolkit"; // or singles: writerDefinition, ...
+import { toolkitDefinitions } from "ai-toolkit";
 for (const def of toolkitDefinitions) registry.register(def);
 ```
 
-Secure by default:
+Secure (recommended) — policy + audit + your human button:
 
 ```ts
-import { wrapDefinition } from "ai-toolkit";
-import { standardPolicy } from "ai-toolkit";
+import { wrapDefinition, standardPolicy } from "ai-toolkit";
+
 registry.register(wrapDefinition(writerDefinition, { policy: standardPolicy, audit }));
-// ctx.approver = async () => "accept" | "deny"  <- your human button
+// ctx.approver = async () => "accept" | "deny";
 ```
 
-Examples in `packages/agent-tools/examples/` (`register.ts`, `secure-register.ts`, `addon.json`, `mcp-servers.json`, `opencode.json`).
+> Working examples: [`register.ts`](packages/agent-tools/examples/register.ts) · [`secure-register.ts`](packages/agent-tools/examples/secure-register.ts) · [`addon.json`](packages/agent-tools/examples/addon.json)
 
-## Use inside opencode (or MCP agents)
+## Use inside opencode (or any MCP agent)
 
-No code: stdio MCP server in `servers/ai-tools-mcp/` exposing all 52 tools.
+No code — a stdio MCP server exposing all 52 tools lives in [`servers/ai-tools-mcp/`](servers/ai-tools-mcp/).
+
+**1.** Build once (produces `dist/`, git-ignored):
 
 ```sh
-cd packages/agent-tools && pnpm build   # dist/ needed
+cd packages/agent-tools && pnpm build
 ```
 
-Then copy `examples/opencode.json` into your `opencode.json` (change the two paths) — glob `ai-tools_*` already on `ask`.
-5-task test plan in `docs/OPENCODE-TEST.md`. Server details in `servers/ai-tools-mcp/README.md`.
+**2.** Copy [`examples/opencode.json`](examples/opencode.json) into your `opencode.json` and set the two paths. Permissions are already on `ask`:
+
+```json
+{
+  "mcp": {
+    "ai-tools": {
+      "type": "local",
+      "command": ["node", "<REPO>/servers/ai-tools-mcp/server.mjs"],
+      "environment": { "AI_TOOLS_CWD": "<YOUR-PROJECT>" },
+      "enabled": true
+    }
+  },
+  "permission": { "ai-tools_*": "ask" }
+}
+```
+
+**3.** Follow the 5-task test plan in [`docs/OPENCODE-TEST.md`](docs/OPENCODE-TEST.md) to verify the integration.
 
 ## The 52 tools
 
-### Files (14)
+> Click a family to expand. One page per tool in [`packages/agent-tools/docs/tools/`](packages/agent-tools/docs/tools/).
+
+<details>
+<summary><b>📁 Files (14)</b> — create, edit, read, move, inspect</summary>
 
 | Tool | Does |
 |---|---|
@@ -66,7 +108,10 @@ Then copy `examples/opencode.json` into your `opencode.json` (change the two pat
 | `check_config` | Validates package.json/tsconfig |
 | `image_read` | png/jpg/webp/gif/pdf → base64 (+best-effort PDF text) |
 
-### Find and understand code (9)
+</details>
+
+<details>
+<summary><b>🔎 Find and understand code (9)</b> — search, AST, real LSP</summary>
 
 | Tool | Does |
 |---|---|
@@ -80,7 +125,10 @@ Then copy `examples/opencode.json` into your `opencode.json` (change the two pat
 | `ast_search` | Structural symbols (TS AST or targeted regex) |
 | `lsp_bridge` | Real tsserver: hover, references, dry rename |
 
-### Execute (5)
+</details>
+
+<details>
+<summary><b>⚙️ Execute (5)</b> — no shell, gated, isolated</summary>
 
 | Tool | Does |
 |---|---|
@@ -90,21 +138,27 @@ Then copy `examples/opencode.json` into your `opencode.json` (change the two pat
 | `lint_fix` | Gated `eslint --fix` |
 | `sandbox_docker` | Command in isolated container (no network) |
 
-### Git (2)
+</details>
+
+<details>
+<summary><b>🌿 Git (2)</b> — read freely, write locally</summary>
 
 | Tool | Does |
 |---|---|
 | `git` | status/diff/log/branch/blame (read-only) |
-| `git_write` | add/commit/branch/checkout/stash (never push: you do that in the App) |
+| `git_write` | add/commit/branch/checkout/stash (never push — you do that in the App) |
 
-### Reason and organize (13)
+</details>
+
+<details>
+<summary><b>🧠 Reason and organize (13)</b> — plan, review, delegate</summary>
 
 | Tool | Does |
 |---|---|
 | `todo` | Step list in `.agent/todos.json` |
 | `ask_user` | Question to the human with options |
-| `delegate_task` | Planning-only (does NOT call LLMs — see below) |
-| `run_subagent` | Real sub-agent with isolated context (Ollama/echo) |
+| `delegate_task` | Planning-only (calls no LLMs — see below) |
+| `run_subagent` | Real sub-agent, isolated context (Ollama/echo) |
 | `refactor_plan` | Executable plan, doesn't execute |
 | `review_code` | Rule-based review + diagnose |
 | `debug_error` | Stack trace to candidates + fix |
@@ -115,7 +169,10 @@ Then copy `examples/opencode.json` into your `opencode.json` (change the two pat
 | `schedule_cron` | Scheduled reminders (add/list/remove/due) |
 | `budget_status` | Global token counter + cap |
 
-### Text and RAG (3)
+</details>
+
+<details>
+<summary><b>✂️ Text and RAG (3)</b> — measure, chunk, pack</summary>
 
 | Tool | Does |
 |---|---|
@@ -123,7 +180,10 @@ Then copy `examples/opencode.json` into your `opencode.json` (change the two pat
 | `chunk_text` | Overlapped chunks |
 | `pack_context` | Files → context with budget |
 
-### Web and integrations (4)
+</details>
+
+<details>
+<summary><b>🌐 Web and integrations (4)</b> — fetch, search, browser, MCP</summary>
 
 | Tool | Does |
 |---|---|
@@ -132,30 +192,41 @@ Then copy `examples/opencode.json` into your `opencode.json` (change the two pat
 | `browser_snapshot` | Headless Chrome/Edge rendered page |
 | `mcp_call` | Calls MCP servers over stdio |
 
-### Memory and hygiene (2)
+</details>
+
+<details>
+<summary><b>💾 Memory and hygiene (2)</b> — remember, never leak</summary>
 
 | Tool | Does |
 |---|---|
 | `memory_store` | Local memory in `.agent/memory` (put/get/search) |
 | `env_secrets` | Check without revealing + redact (read-only) |
 
+</details>
+
 > `delegate_task` is deterministic planning (calls no models). For a sub-agent that really reasons, use `run_subagent`.
 
-Details for each in `packages/agent-tools/docs/tools/*.md`.
+## How safety works
 
-## Safety in short
+```
+model ──▶ opencode / MCP ──▶ guard ──▶ 52 tools
+                              │
+              ┌───────────────┼───────────────┐
+              ▼               ▼               ▼
+           policy         approval          audit + budget
+     (fail-closed,      (human            (append-only,
+      deny wins)      accept|deny)         session id, cap)
+```
 
-- Fail-closed: deny always wins, nothing passes without an explicit allow (`src/core/policy.ts`).
-- `write/execute` ask `accept | deny`; `deny` → `NEED_APPROVAL`, nothing touched.
-- Append-only audit in `.agent/audit/*.jsonl` with `sessionId`.
-- Global token budget with optional cap (`BUDGET_EXCEEDED`).
-- Paths always inside cwd (anti-traversal), private URLs blocked, never secrets in logs.
+- **Fail-closed**: deny always wins; nothing passes without an explicit allow.
+- **Dangerous commands** (`rm -rf /`, `mkfs`, `curl|sh`…) are blocked even on accept.
+- **Paths** always stay inside the working directory; **private URLs** blocked; **secrets** never in logs.
 
 ## Privacy: what stays on your PC
 
-- The public repo only gets code, docs and tests. Never your content.
+- The repo only ever gets code, docs and tests. Never your content.
 - Everything tools write while working (`audit`, `history`, `todos`, `memory`, `schedule`, `budget`) lives in `.agent/`, ignored by git.
-- Outputs include your disk paths (e.g. `read_file.abs`) and audits store the `cwd`: they stay local, never commit `.agent/`.
+- Outputs include your disk paths and audits store the working directory: they stay local — never commit `.agent/`.
 
 ## Validation
 
@@ -166,8 +237,8 @@ pnpm typecheck
 pnpm test
 ```
 
-CI on every push (`.github/workflows/ci.yml`): install + typecheck + test.
+CI runs install + typecheck + build + test on every push ([workflow](.github/workflows/ci.yml)).
 
 ## Status
 
-v0.16.0 — 52 tools, 8 phases (base → lock → exec+natives → MCP → dev loop → knowledge → senses → brain). History in `git log`.
+**v0.16.0** — 52 tools in 8 phases: base → lock → exec+natives → MCP → dev loop → knowledge → senses → brain. Full history in `git log`. MIT ([LICENSE](LICENSE)).

@@ -51,6 +51,8 @@ export { sandboxDockerDefinition } from "./tools/sandbox-docker/definition.js";
 export { lspBridgeDefinition } from "./tools/lsp-bridge/definition.js";
 export { budgetStatusDefinition } from "./tools/budget-status/definition.js";
 export { runSubagentDefinition } from "./tools/run-subagent/definition.js";
+
+export { toolkitDefinitions } from "./toolkit.js";
 export { writerLogic, WRITER_VERSION } from "./tools/writer/logic.js";
 export { editorLogic, EDITOR_VERSION } from "./tools/editor/logic.js";
 export { preparerLogic, PREPARER_VERSION } from "./tools/preparer/logic.js";
