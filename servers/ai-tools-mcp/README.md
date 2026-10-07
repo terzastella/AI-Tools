@@ -1,6 +1,6 @@
 # ai-tools-mcp — server MCP stdio
 
-Espone le 52 `ToolDefinition` a opencode e agenti MCP-compatibili.
+Espone le 53 `ToolDefinition` a opencode e agenti MCP-compatibili.
 
 ## Requisiti
 

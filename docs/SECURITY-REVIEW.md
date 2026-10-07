@@ -73,3 +73,9 @@ Seconda valutazione ricevuta: 8.5/10 con un unico punto fondato (docs tool-per-t
 trovate 5 su 53 per una ricerca incompleta — verifica reale: 52/53, mancava solo
 `audit-verify.md`, aggiunto). Resto confermato: limitazioni già dichiarate.
 Copertura docs ora 53/53.
+
+## Terza review (8.7/10): narrativa numeri + docs (verificati)
+
+- Narrativa: accolto — tolta la parentesi `(52 + audit_verify)` dal catalog, ora solo "53" ovunque.
+- Docs: smentito con prove — `tests/docs-coverage.test.ts` confronta `src/tools/*`
+  con `docs/tools/*.md` e fallisce se divergono: copertura 53/53 garantita dal CI.
