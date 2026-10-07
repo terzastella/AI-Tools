@@ -36,6 +36,12 @@ try {
 }
 
 const cwd = process.env["AI_TOOLS_CWD"] || process.cwd();
+/**
+ * @typedef {object} ToolDefinition
+ * @property {string} ToolDefinition.name
+ * @property {{type:string}} ToolDefinition.parameters
+ * @property {Function} ToolDefinition.execute
+ */
 const defs = Object.values(kit).filter(
   (v) => v && typeof v === "object" && typeof v.name === "string" && v.parameters && typeof v.execute === "function",
 );

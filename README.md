@@ -9,7 +9,6 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node: 20+](https://img.shields.io/badge/node-20+-blue.svg)](packages/agent-tools/package.json)
 [![CI](https://github.com/terzastella/AI-Tools/actions/workflows/ci.yml/badge.svg)](https://github.com/terzastella/AI-Tools/actions)
-[![Version](https://img.shields.io/badge/version-0.18.0-orange.svg)](packages/agent-tools/package.json)
 [![Core](https://img.shields.io/badge/core--15-guaranteed-blue.svg)](docs/LEVELS.md)
 
 *🇮🇹 Italiano? Leggi [README-IT.md](README-IT.md) · Machine catalog: [catalog/tools.json](catalog/tools.json)*

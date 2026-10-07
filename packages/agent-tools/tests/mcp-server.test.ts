@@ -82,4 +82,14 @@ describe("mcp server ai-tools", () => {
     await call("initialize", {});
     await expect(call("tools/call", { name: "fantasma", arguments: {} })).rejects.toThrow("unknown tool");
   }, 30_000);
+
+  it("policy-only: scrittura in scope passa senza approver (i permessi li chiede opencode)", async () => {
+    await call("initialize", {});
+    await fs.mkdir(path.join(tmp, "src"), { recursive: true });
+    const res = (await call("tools/call", { name: "create_file", arguments: { path: "src/da-mcp.txt", content: "ciao\n" } })) as {
+      content: { text: string }[];
+    };
+    expect(res.content[0]!.text).toContain("src/da-mcp.txt");
+    expect(await fs.readFile(path.join(tmp, "src", "da-mcp.txt"), "utf8")).toBe("ciao\n");
+  }, 30_000);
 });
