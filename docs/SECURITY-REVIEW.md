@@ -66,3 +66,10 @@ ma pre-1.0 = breaking possibili. Dichiarato qui e in `docs/LEVELS.md`.
 - Memoria vettoriale (oggi solo keyword) e stima token euristica (oggi chars/4).
 - `web_search` best-effort su layout DDG (documentato nel tool).
 - Nessun caso d'uso reale end-to-end dentro un agente oltre i 5 task di `docs/OPENCODE-TEST.md`.
+
+## Re-review esterna (8.5/10)
+
+Seconda valutazione ricevuta: 8.5/10 con un unico punto fondato (docs tool-per-tool:
+trovate 5 su 53 per una ricerca incompleta — verifica reale: 52/53, mancava solo
+`audit-verify.md`, aggiunto). Resto confermato: limitazioni già dichiarate.
+Copertura docs ora 53/53.
