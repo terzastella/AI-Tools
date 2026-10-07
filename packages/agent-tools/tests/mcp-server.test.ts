@@ -62,11 +62,11 @@ afterEach(async () => {
 });
 
 describe("mcp server ai-tools", () => {
-  it("initialize + list espone 52 tool", async () => {
+  it("initialize + list espone 53 tool", async () => {
     const init = (await call("initialize", {})) as { serverInfo: { name: string } };
     expect(init.serverInfo.name).toBe("ai-tools");
     const list = (await call("tools/list", {})) as { tools: { name: string }[] };
-    expect(list.tools.length).toBe(52);
+    expect(list.tools.length).toBe(53);
     expect(list.tools.map((t) => t.name)).toContain("bash_exec");
   }, 30_000);
 

@@ -4,10 +4,10 @@ import { secureDefinitions } from "../examples/secure-register.js";
 import { createContext } from "../src/core/context.js";
 
 describe("toolkit", () => {
-  it("espone 52 definition uniche", () => {
-    expect(toolkitDefinitions.length).toBe(52);
+  it("espone 53 definition uniche", () => {
+    expect(toolkitDefinitions.length).toBe(53);
     const names = toolkitDefinitions.map((d) => d.name);
-    expect(new Set(names).size).toBe(52);
+    expect(new Set(names).size).toBe(53);
   });
 
   it("stesse del secure-register", () => {

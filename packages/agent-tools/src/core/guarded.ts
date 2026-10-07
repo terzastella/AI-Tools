@@ -10,6 +10,15 @@ import { estimateArgsTokens, estimateTokens, readUsage, recordUsage } from "./bu
 import type { AuditSink } from "./audit.js";
 import { FileAudit } from "./audit.js";
 
+/** Ricostruisce la riga comando intera (binario + args): i pattern pericolosi vivono lì, non nel solo binario. */
+function fullCommand(args: Record<string, unknown>): string {
+  const cmd = args["cmd"];
+  if (typeof cmd !== "string" || !cmd.trim()) return "";
+  const rawArgs = args["args"];
+  const extra = Array.isArray(rawArgs) ? rawArgs.filter((a): a is string => typeof a === "string") : [];
+  return [cmd, ...extra].join(" ");
+}
+
 export interface GuardOptions {
   policy?: Policy;
   audit?: AuditSink;
@@ -56,10 +65,10 @@ export function wrapDefinition<TArgs extends Record<string, unknown>, TOut>(
             await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: c.reason, cwd: ctx.cwd, sessionId: ctx.sessionId });
             return res;
           }
-          // Blocco comandi pericolosi anche senza target (es. futuro bash_exec con cmd)
-          const cmd = (args as Record<string, unknown>)["cmd"];
-          if (typeof cmd === "string" && isDangerousCommand(cmd)) {
-            const res = fail(def.name, def.metadata?.version ?? "1.0.0", "POLICY_DENIED", `dangerous command blocked: ${cmd.slice(0, 120)}`, Math.round(performance.now() - start));
+          // Blocco comandi pericolosi anche senza target (riga intera, non solo binario)
+          const full = fullCommand(args as Record<string, unknown>);
+          if (full && isDangerousCommand(full)) {
+            const res = fail(def.name, def.metadata?.version ?? "1.0.0", "POLICY_DENIED", `dangerous command blocked: ${full.slice(0, 120)}`, Math.round(performance.now() - start));
             await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: "dangerous command", cwd: ctx.cwd, sessionId: ctx.sessionId });
             return res;
           }
@@ -85,9 +94,9 @@ export function wrapDefinition<TArgs extends Record<string, unknown>, TOut>(
             return res;
           }
         }
-        // Blocco comandi pericolosi con target (doppio controllo, non si sa mai)
-        const cmdWithTargets = (args as Record<string, unknown>)["cmd"];
-        if (typeof cmdWithTargets === "string" && isDangerousCommand(cmdWithTargets)) {
+        // Blocco comandi pericolosi con target (doppio controllo, riga intera)
+        const fullWithTargets = fullCommand(args as Record<string, unknown>);
+        if (fullWithTargets && isDangerousCommand(fullWithTargets)) {
           const res = fail(def.name, def.metadata?.version ?? "1.0.0", "POLICY_DENIED", "dangerous command blocked", Math.round(performance.now() - start));
           await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: "dangerous command", cwd: ctx.cwd, sessionId: ctx.sessionId });
           return res;

@@ -4,7 +4,7 @@ Lavoriamo SOLO dentro la root di questa repo (path relativi, mai assoluti).
 
 Struttura:
 - `packages/agent-tools/src/core/` — tipi, policy, approval, audit, guarded, budget, model-router
-- `packages/agent-tools/src/tools/*/` — 52 tool
+- `packages/agent-tools/src/tools/*/` — 53 tool
 - `packages/py-ref/` — riferimento Python, non eseguire come tool
 - `servers/ai-tools-mcp/` — server MCP stdio
 - `catalog/tools.json` — lista tool, generata

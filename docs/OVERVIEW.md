@@ -3,7 +3,7 @@
 Immagina il modello come uno stagista bravissimo ma senza mani.
 I tool sono le mani.
 
-## Mani che hai già (52)
+## Mani che hai già (53)
 
 - Occhi e penna: `read_file, list_directory, find_files, create_file, edit_file, apply_patch, move_file`
 - Ctrl+F potenziato: `search_text, search_pro, prepare_context, find_references, go_to_definition, inspect_symbol`
@@ -15,6 +15,8 @@ I tool sono le mani.
 - Fase 6 nuove: `web_fetch` + `web_search` (occhi su internet, con anti-SSRF), `ast_search` (capisce il codice, non solo Ctrl+F), `memory_store` (si ricorda le cose), `env_secrets` (non spiffera le password)
 - Fase 7 nuove: `image_read` (vede foto e PDF), `browser_snapshot` (foto di pagine vere), `schedule_cron` (promemoria da solo), `sandbox_docker` (gabbia isolata per codice rischioso)
 - Fase 8 nuove: `lsp_bridge` (capisce i tipi davvero via tsserver), `budget_status` (conta i token e taglia oltre il tetto), `run_subagent` (sotto-stagista vero con contesto isolato)
+- Hardening: symlink smascherati, env dei figli ripulita, redirect rivalidati, `audit_verify` (controlla la catena dell'audit)
+- Livelli: core-15 garantiti per agenti nuovi, resto estesi — vedi `docs/LEVELS.md`
 
 ## Lucchetto nuovo (Fase 2)
 
@@ -39,3 +41,4 @@ File `src/core/guarded.ts`:
 - Fase 6 fatta: conoscenza (web diretto con SSRF-guard, AST search, memoria locale, secrets hygiene)
 - Fase 7 fatta: sensi e autonomia (immagini, browser, cron, sandbox) + fix bug todo sempre-deny
 - Fase 8 fatta: il cervello (LSP vero, budget globale con tetto, sub-agent veri via Ollama, audit con sessionId)
+- Hardening fatto: symlink/realpath, env scrubbed, redirect rivalidati, audit con redact+catena, E2E adversarial, livelli core-15

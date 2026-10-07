@@ -1,4 +1,4 @@
-# Testare i 52 tool dentro opencode (5 task)
+# Testare i 53 tool dentro opencode (5 task)
 
 Sostituisci `<PATH-REPO>` con il path di questa repo e `<PATH-TUO-PROGETTO>` con un progetto prova.
 Copia `examples/opencode.json` nel tuo `opencode.json` (glob `ai-tools_*` già su `ask`: opencode chiede lui, il server gira policy-only).
@@ -39,5 +39,5 @@ Prompt: `usa ai-tools: ricordati che preferisco commit brevi, poi metti in todo 
 
 ## Note
 
-- 52 tool = tanto contesto: se opencode si lamenta del context, disabilita a gruppi con `"ai-tools_*": false` + abilita per agent solo quelli del task.
+- 53 tool = tanto contesto: se opencode si lamenta del context, disabilita a gruppi con `"ai-tools_*": false` + abilita per agent solo quelli del task (parti dal core-15 in `docs/LEVELS.md`).
 - `delegate_task` è planning-only: per sub-agent in opencode usa il suo Task, oppure `run_subagent` (richiede Ollama locale).

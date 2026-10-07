@@ -1,5 +1,5 @@
 /**
- * Unico array con le 52 ToolDefinition, nell'ordine di secure-register.
+ * Unico array con le 53 ToolDefinition, nell'ordine di secure-register.
  * Per chi costruisce un agent: un import, un loop di register.
  */
 import type { ToolDefinition } from "./core/types.js";
@@ -55,6 +55,7 @@ import { sandboxDockerDefinition } from "./tools/sandbox-docker/definition.js";
 import { lspBridgeDefinition } from "./tools/lsp-bridge/definition.js";
 import { budgetStatusDefinition } from "./tools/budget-status/definition.js";
 import { runSubagentDefinition } from "./tools/run-subagent/definition.js";
+import { auditVerifyDefinition } from "./tools/audit-verify/definition.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toolkitDefinitions: ToolDefinition<any, any>[] = [
@@ -110,4 +111,36 @@ export const toolkitDefinitions: ToolDefinition<any, any>[] = [
   lspBridgeDefinition,
   budgetStatusDefinition,
   runSubagentDefinition,
+  auditVerifyDefinition,
 ];
+
+/**
+ * Core garantito (15): il loop minimo di ogni agente + un rappresentante per area.
+ * Criterio: senza questi un agente non legge, non cerca, non modifica, non esegue,
+ * non versiona, non pianifica, non chiede, non diagnostica. Vedi docs/LEVELS.md.
+ * Test: tests/levels.test.ts inchioda la lista (cambiarla è breaking consciente).
+ */
+export const TOOLKIT_CORE_NAMES = [
+  "read_file",
+  "list_directory",
+  "find_files",
+  "create_file",
+  "edit_file",
+  "apply_patch",
+  "search_text",
+  "ast_search",
+  "bash_exec",
+  "git",
+  "git_write",
+  "todo",
+  "ask_user",
+  "diagnose",
+  "test_runner",
+];
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const toolkitCore: ToolDefinition<any, any>[] = TOOLKIT_CORE_NAMES.map((n) => {
+  const found = toolkitDefinitions.find((d) => d.name === n);
+  if (!found) throw new Error(`core tool missing: ${n}`);
+  return found;
+});

@@ -43,8 +43,8 @@ function ctx() {
 }
 
 describe("fase8 cervello", () => {
-  it("secure-register espone 52 tool", () => {
-    expect(secureDefinitions(tmp).length).toBe(52);
+  it("secure-register espone 53 tool", () => {
+    expect(secureDefinitions(tmp).length).toBe(53);
   });
 
   it("lsp hover mostra il tipo", async () => {

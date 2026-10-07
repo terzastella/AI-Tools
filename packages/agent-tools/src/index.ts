@@ -51,8 +51,8 @@ export { sandboxDockerDefinition } from "./tools/sandbox-docker/definition.js";
 export { lspBridgeDefinition } from "./tools/lsp-bridge/definition.js";
 export { budgetStatusDefinition } from "./tools/budget-status/definition.js";
 export { runSubagentDefinition } from "./tools/run-subagent/definition.js";
+export { auditVerifyDefinition } from "./tools/audit-verify/definition.js";
 
-export { toolkitDefinitions } from "./toolkit.js";
 export { writerLogic, WRITER_VERSION } from "./tools/writer/logic.js";
 export { editorLogic, EDITOR_VERSION } from "./tools/editor/logic.js";
 export { preparerLogic, PREPARER_VERSION } from "./tools/preparer/logic.js";
@@ -105,3 +105,5 @@ export { sandboxDockerLogic, SANDBOX_DOCKER_VERSION } from "./tools/sandbox-dock
 export { lspBridgeLogic, LSP_BRIDGE_VERSION } from "./tools/lsp-bridge/logic.js";
 export { budgetStatusLogic, BUDGET_STATUS_VERSION } from "./tools/budget-status/logic.js";
 export { runSubagentLogic, RUN_SUBAGENT_VERSION } from "./tools/run-subagent/logic.js";
+export { auditVerifyLogic, AUDIT_VERIFY_VERSION } from "./tools/audit-verify/logic.js";
+export { toolkitDefinitions, toolkitCore, TOOLKIT_CORE_NAMES } from "./toolkit.js";

@@ -1,7 +1,7 @@
 {
   "name": "ai-toolkit",
-  "version": "0.17.0",
-  "description": "AI-Tools — 52 tool hardened (symlink, env, redirect) + approval gate + MCP. Privato, addon plain + policy/audit.",
+  "version": "0.18.0",
+  "description": "AI-Tools — 53 tool hardened + audit con catena. MIT, addon plain + policy/audit.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.js",
@@ -58,7 +58,8 @@
     "./tools/sandbox-docker": "./dist/tools/sandbox-docker/definition.js",
     "./tools/lsp-bridge": "./dist/tools/lsp-bridge/definition.js",
     "./tools/budget-status": "./dist/tools/budget-status/definition.js",
-    "./tools/run-subagent": "./dist/tools/run-subagent/definition.js"
+    "./tools/run-subagent": "./dist/tools/run-subagent/definition.js",
+    "./tools/audit-verify": "./dist/tools/audit-verify/definition.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

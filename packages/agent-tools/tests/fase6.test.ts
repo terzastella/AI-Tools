@@ -53,8 +53,8 @@ function localCtx() {
 }
 
 describe("fase6 conoscenza", () => {
-  it("secure-register espone 52 tool", () => {
-    expect(secureDefinitions(tmp).length).toBe(52);
+  it("secure-register espone 53 tool", () => {
+    expect(secureDefinitions(tmp).length).toBe(53);
   });
 
   it("web_fetch legge pagina locale e toglie script", async () => {

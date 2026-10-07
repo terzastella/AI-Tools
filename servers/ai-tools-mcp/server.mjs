@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * AI-Tools MCP server (stdio): espone le 52 ToolDefinition via
+ * AI-Tools MCP server (stdio): espone le 53 ToolDefinition via
  * initialize + tools/list + tools/call, così opencode e agenti MCP
  * li usano senza scrivere codice.
  *

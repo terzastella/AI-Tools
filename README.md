@@ -2,14 +2,15 @@
 
 # AI-Tools
 
-**52 safety-first tools that give any AI model hands.**
+**53 safety-first tools that give any AI model hands.**
 
 *Files, terminal, git, web, memory, LSP, MCP and budget — one registry, zero runtime dependencies.*
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node: 20+](https://img.shields.io/badge/node-20+-blue.svg)](packages/agent-tools/package.json)
 [![CI](https://github.com/terzastella/AI-Tools/actions/workflows/ci.yml/badge.svg)](https://github.com/terzastella/AI-Tools/actions)
-[![Version](https://img.shields.io/badge/version-0.17.0-orange.svg)](packages/agent-tools/package.json)
+[![Version](https://img.shields.io/badge/version-0.18.0-orange.svg)](packages/agent-tools/package.json)
+[![Core](https://img.shields.io/badge/core--15-guaranteed-blue.svg)](docs/LEVELS.md)
 
 *🇮🇹 Italiano? Leggi [README-IT.md](README-IT.md) · Machine catalog: [catalog/tools.json](catalog/tools.json)*
 
@@ -23,14 +24,14 @@ Most tool collections bolt safety on afterwards. Here it is the foundation:
 
 - 🔒 **Approval gate built in** — reads are free, every write and execution asks a human (`accept | deny`). Deny means `NEED_APPROVAL` and nothing is touched.
 - 📝 **Audit by default** — every call is logged append-only with session id. You can always reconstruct what the agent did.
-- ↔️ **MCP both ways** — a client to call external servers *and* a server exposing all 52 tools to opencode and MCP-compatible agents.
+- ↔️ **MCP both ways** — a client to call external servers *and* a server exposing all 53 tools to opencode and MCP-compatible agents.
 - 📦 **Zero runtime dependencies** — Node 20+ only. TypeScript strict, tested with vitest, CI on every push.
 
 ## Contents
 
 - [Quick start](#quick-start)
 - [Use inside opencode](#use-inside-opencode-or-any-mcp-agent)
-- [The 52 tools](#the-52-tools)
+- [The 53 tools](#the-53-tools)
 - [How safety works](#how-safety-works)
 - [Privacy](#privacy-what-stays-on-your-pc)
 - [Validation](#validation)
@@ -58,7 +59,7 @@ registry.register(wrapDefinition(writerDefinition, { policy: standardPolicy, aud
 
 ## Use inside opencode (or any MCP agent)
 
-No code — a stdio MCP server exposing all 52 tools lives in [`servers/ai-tools-mcp/`](servers/ai-tools-mcp/).
+No code — a stdio MCP server exposing all 53 tools lives in [`servers/ai-tools-mcp/`](servers/ai-tools-mcp/).
 
 **1.** Build once (produces `dist/`, git-ignored):
 
@@ -84,7 +85,11 @@ cd packages/agent-tools && pnpm build
 
 **3.** Follow the 5-task test plan in [`docs/OPENCODE-TEST.md`](docs/OPENCODE-TEST.md) to verify the integration.
 
-## The 52 tools
+## The 53 tools
+
+> Guaranteed core-15 for new agents — see [`docs/LEVELS.md`](docs/LEVELS.md).
+
+> Guaranteed core-15 for new agents — see [`docs/LEVELS.md`](docs/LEVELS.md).
 
 > Click a family to expand. One page per tool in [`packages/agent-tools/docs/tools/`](packages/agent-tools/docs/tools/).
 
@@ -201,6 +206,7 @@ cd packages/agent-tools && pnpm build
 |---|---|
 | `memory_store` | Local memory in `.agent/memory` (put/get/search) |
 | `env_secrets` | Check without revealing + redact (read-only) |
+| `audit_verify` | Verifies the audit hash-chain (read-only) |
 
 </details>
 
@@ -209,7 +215,7 @@ cd packages/agent-tools && pnpm build
 ## How safety works
 
 ```
-model ──▶ opencode / MCP ──▶ guard ──▶ 52 tools
+model ──▶ opencode / MCP ──▶ guard ──▶ 53 tools
                               │
               ┌───────────────┼───────────────┐
               ▼               ▼               ▼
@@ -241,4 +247,4 @@ CI runs install + typecheck + build + test on every push ([workflow](.github/wor
 
 ## Status
 
-**v0.17.0** — 52 tool hardened (symlink/realpath, env scrubbed, redirect rivalidati), 8 fasi + hardening. Full history in `git log`. MIT ([LICENSE](LICENSE)).
+**v0.18.0** — 53 tools: hardened core (symlinks, env, redirects), chained audit, guaranteed core-15. Full history in `git log`. MIT ([LICENSE](LICENSE)).
