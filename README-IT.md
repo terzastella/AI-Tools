@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛠️ AI-Tools
+# AI-Tools
 
 **52 tool safety-first che danno a qualsiasi modello AI delle mani.**
 
