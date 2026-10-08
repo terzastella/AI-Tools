@@ -197,7 +197,7 @@ cd packages/agent-tools && pnpm build
 </details>
 
 <details>
-<summary><b>💾 Memory and hygiene (2)</b> — remember, never leak</summary>
+<summary><b>💾 Memory and hygiene (3)</b> — remember, never leak, verify</summary>
 
 | Tool | Does |
 |---|---|

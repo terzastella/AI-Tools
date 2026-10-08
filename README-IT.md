@@ -197,7 +197,7 @@ cd packages/agent-tools && pnpm build
 </details>
 
 <details>
-<summary><b>💾 Memoria e igiene (2)</b> — ricorda, non spiffera</summary>
+<summary><b>💾 Memoria e igiene (3)</b> — ricorda, non spiffera, verifica</summary>
 
 | Tool | Fa |
 |---|---|
