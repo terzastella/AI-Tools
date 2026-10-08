@@ -33,7 +33,8 @@ export async function sandboxDockerLogic(ctx: ToolContext, input: SandboxDockerI
     throw Object.assign(new Error("cmd must be an array 1..20"), { code: "BAD_ARGS" });
   }
   for (const c of cmd) {
-    if (typeof c !== "string" || !c.trim() || c.length > 1000) throw Object.assign(new Error("bad cmd entry"), { code: "BAD_ARGS" });
+    if (typeof c !== "string" || !c.trim() || c.length > 1000)
+      throw Object.assign(new Error("bad cmd entry"), { code: "BAD_ARGS" });
   }
   const full = cmd.join(" ");
   if (isDangerousCommand(full)) throw Object.assign(new Error("dangerous command blocked"), { code: "POLICY_DENIED" });
@@ -59,12 +60,33 @@ export async function sandboxDockerLogic(ctx: ToolContext, input: SandboxDockerI
   try {
     const { stdout, stderr } = await execFileAsync(
       "docker",
-      ["run", "--rm", "--network", "none", "--memory", "512m", "--cpus", "1", "-v", `${mount}:/work`, "-w", "/work", image, ...cmd],
+      [
+        "run",
+        "--rm",
+        "--network",
+        "none",
+        "--memory",
+        "512m",
+        "--cpus",
+        "1",
+        "-v",
+        `${mount}:/work`,
+        "-w",
+        "/work",
+        image,
+        ...cmd,
+      ],
       { cwd: ctx.cwd, timeout: timeoutMs, windowsHide: true, maxBuffer: 4_000_000, env: scrubEnv(ctx) },
     );
     const out = String(stdout);
     const err = String(stderr);
-    return { image, code: 0, stdout: out.slice(0, 20_000), stderr: err.slice(0, 5_000), truncated: out.length > 20_000 };
+    return {
+      image,
+      code: 0,
+      stdout: out.slice(0, 20_000),
+      stderr: err.slice(0, 5_000),
+      truncated: out.length > 20_000,
+    };
   } catch (e: unknown) {
     const err = e as { stdout?: unknown; stderr?: unknown; code?: number; killed?: boolean; message?: string };
     if (err.killed) throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
@@ -73,6 +95,12 @@ export async function sandboxDockerLogic(ctx: ToolContext, input: SandboxDockerI
     if (/Unable to find image|pull access denied|not found/i.test(errText)) {
       throw Object.assign(new Error(`image non disponibile: ${image}`), { code: "IMAGE_MISSING" });
     }
-    return { image, code: Number(err.code ?? 1), stdout: out.slice(0, 20_000), stderr: errText.slice(0, 5_000), truncated: out.length > 20_000 };
+    return {
+      image,
+      code: Number(err.code ?? 1),
+      stdout: out.slice(0, 20_000),
+      stderr: errText.slice(0, 5_000),
+      truncated: out.length > 20_000,
+    };
   }
 }

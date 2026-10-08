@@ -24,9 +24,14 @@ export const editManyDefinition: ToolDefinition<EditManyInput, EditManyOutput> =
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: EDIT_MANY_VERSION, since: "0.10.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<EditManyOutput>> {
-    return withTiming("edit_many", EDIT_MANY_VERSION, () => editManyLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "EDIT_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "edit_many",
+      EDIT_MANY_VERSION,
+      () => editManyLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "EDIT_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

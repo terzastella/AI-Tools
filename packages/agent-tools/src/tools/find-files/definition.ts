@@ -23,9 +23,14 @@ export const findFilesDefinition: ToolDefinition<FindFilesInput, FindFilesOutput
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: FIND_FILES_VERSION, since: "0.10.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<FindFilesOutput>> {
-    return withTiming("find_files", FIND_FILES_VERSION, () => findFilesLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "FIND_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "find_files",
+      FIND_FILES_VERSION,
+      () => findFilesLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "FIND_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

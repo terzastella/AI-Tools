@@ -88,7 +88,12 @@ function parsePatch(patch: string): FilePatch[] {
       const kind = (raw.charAt(0) === "+" ? "+" : raw.charAt(0) === "-" ? "-" : " ") as Hunk["lines"][number]["kind"];
       const text = raw.length > 0 && (kind === "+" || kind === "-" || raw.charAt(0) === " ") ? raw.slice(1) : raw;
       hunk.lines.push({ kind, text });
-    } else if (raw.startsWith("diff --git") || raw.startsWith("index ") || raw.startsWith("new file") || raw.startsWith("deleted file")) {
+    } else if (
+      raw.startsWith("diff --git") ||
+      raw.startsWith("index ") ||
+      raw.startsWith("new file") ||
+      raw.startsWith("deleted file")
+    ) {
       continue;
     } else if (raw.trim() === "" && !hunk) {
       continue;
@@ -113,7 +118,12 @@ function findNearby(origLines: string[], expected: string, cursor: number, fuzzy
   return -1;
 }
 
-function applyHunks(original: string, hunks: Hunk[], rel: string, fuzzy: boolean): { content: string; added: number; removed: number } {
+function applyHunks(
+  original: string,
+  hunks: Hunk[],
+  rel: string,
+  fuzzy: boolean,
+): { content: string; added: number; removed: number } {
   const origLines = original.split("\n");
   const out: string[] = [];
   let cursor = 1;
@@ -142,7 +152,10 @@ function applyHunks(original: string, hunks: Hunk[], rel: string, fuzzy: boolean
       if (l.kind === " ") {
         const found = findNearby(origLines, l.text, cursor, fuzzy);
         if (found === -1) {
-          throw Object.assign(new Error(`context mismatch in ${rel} at line ${cursor}: expected "${l.text.slice(0, 60)}"`), { code: "CONTEXT_MISMATCH" });
+          throw Object.assign(
+            new Error(`context mismatch in ${rel} at line ${cursor}: expected "${l.text.slice(0, 60)}"`),
+            { code: "CONTEXT_MISMATCH" },
+          );
         }
         while (cursor < found) {
           out.push(origLines[cursor - 1] ?? "");

@@ -56,7 +56,10 @@ describe("fase8 cervello", () => {
 
   it("lsp references trova definizione + uso", async () => {
     const g = wrapDefinition(lspBridgeDefinition, { policy: standardPolicy, audit: new MemoryAudit() });
-    const res = await g.execute({ args: { op: "references", path: "src/math.ts", line: 1, symbol: "somma" }, ctx: ctx() });
+    const res = await g.execute({
+      args: { op: "references", path: "src/math.ts", line: 1, symbol: "somma" },
+      ctx: ctx(),
+    });
     expect(res.ok).toBe(true);
     if (res.ok) {
       const files = res.data.references!.map((r) => r.path);
@@ -67,7 +70,10 @@ describe("fase8 cervello", () => {
 
   it("lsp rename dry propone modifiche senza scrivere", async () => {
     const g = wrapDefinition(lspBridgeDefinition, { policy: standardPolicy, audit: new MemoryAudit() });
-    const res = await g.execute({ args: { op: "rename", path: "src/math.ts", line: 1, symbol: "somma", newName: "addizione" }, ctx: ctx() });
+    const res = await g.execute({
+      args: { op: "rename", path: "src/math.ts", line: 1, symbol: "somma", newName: "addizione" },
+      ctx: ctx(),
+    });
     expect(res.ok).toBe(true);
     if (res.ok) {
       expect(res.data.edits!.length).toBeGreaterThanOrEqual(2);
@@ -124,13 +130,21 @@ describe("fase8 cervello", () => {
     const no = await g.execute({ args: { goal: "x", provider: "echo" }, ctx: deny });
     expect(no.ok).toBe(false);
     expect(no.error?.code).toBe("NEED_APPROVAL");
-    const off = await g.execute({ args: { goal: "x", provider: "ollama", model: "no-modello-xyz", timeoutMs: 10_000 }, ctx: ctx() });
+    const off = await g.execute({
+      args: { goal: "x", provider: "ollama", model: "no-modello-xyz", timeoutMs: 10_000 },
+      ctx: ctx(),
+    });
     expect(off.ok).toBe(false);
     expect(["OLLAMA_MISSING", "MODEL_ERROR", "TIMEOUT"]).toContain(off.error?.code);
   });
 
   it("router fallback: primo ko, secondo ok", async () => {
-    const bad = { name: "ko", chat: async () => { throw Object.assign(new Error("down"), { code: "DOWN" }); } };
+    const bad = {
+      name: "ko",
+      chat: async () => {
+        throw Object.assign(new Error("down"), { code: "DOWN" });
+      },
+    };
     const res = await chatWithFallback(ctx(), [bad, echoProvider], { prompt: "ciao" });
     expect(res.provider).toBe("echo");
     expect(res.text).toContain("ciao");

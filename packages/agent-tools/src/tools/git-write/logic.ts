@@ -27,9 +27,20 @@ export const GIT_WRITE_VERSION = "1.0.0";
 
 const BRANCH_RE = /^[A-Za-z0-9._/-]{1,100}$/;
 
-async function runGit(cwd: string, args: string[], timeout: number, env: NodeJS.ProcessEnv): Promise<{ stdout: string; stderr: string; code: number }> {
+async function runGit(
+  cwd: string,
+  args: string[],
+  timeout: number,
+  env: NodeJS.ProcessEnv,
+): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    const { stdout, stderr } = await execFileAsync("git", args, { cwd, timeout, windowsHide: true, maxBuffer: 2_000_000, env });
+    const { stdout, stderr } = await execFileAsync("git", args, {
+      cwd,
+      timeout,
+      windowsHide: true,
+      maxBuffer: 2_000_000,
+      env,
+    });
     return { stdout: String(stdout), stderr: String(stderr), code: 0 };
   } catch (e: unknown) {
     const err = e as { stdout?: unknown; stderr?: unknown; code?: number; killed?: boolean };

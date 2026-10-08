@@ -6,7 +6,8 @@ import { runSubagentPermissions } from "./permissions.js";
 export const runSubagentDefinition: ToolDefinition<RunSubagentInput, RunSubagentOutput> = {
   name: "run_subagent",
   label: "Run subagent",
-  description: "Sub-agent vero con contesto isolato: gli passi goal + path, lui ragiona sul modello (default Ollama locale) e torna il risultato. delegate_task invece è solo planning.",
+  description:
+    "Sub-agent vero con contesto isolato: gli passi goal + path, lui ragiona sul modello (default Ollama locale) e torna il risultato. delegate_task invece è solo planning.",
   category: "other",
   parameters: {
     type: "object",
@@ -25,9 +26,14 @@ export const runSubagentDefinition: ToolDefinition<RunSubagentInput, RunSubagent
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: RUN_SUBAGENT_VERSION, since: "0.16.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<RunSubagentOutput>> {
-    return withTiming("run_subagent", RUN_SUBAGENT_VERSION, () => runSubagentLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "SUBAGENT_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "run_subagent",
+      RUN_SUBAGENT_VERSION,
+      () => runSubagentLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "SUBAGENT_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

@@ -23,9 +23,14 @@ export const gitDefinition: ToolDefinition<GitInput, GitOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: GIT_VERSION, since: "0.8.8" },
   async execute({ args, ctx }): Promise<AgentToolResult<GitOutput>> {
-    return withTiming("git", GIT_VERSION, () => gitLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "GIT_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "git",
+      GIT_VERSION,
+      () => gitLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "GIT_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

@@ -6,7 +6,8 @@ import { countTokensPermissions } from "./permissions.js";
 export const countTokensDefinition: ToolDefinition<CountTokensInput, CountTokensOutput> = {
   name: "count_tokens",
   label: "Count tokens",
-  description: "Conta chars/parole/righe e stima token come chars//4 (euristica). Puro, non tocca disco. Port nativo di token_count.py.",
+  description:
+    "Conta chars/parole/righe e stima token come chars//4 (euristica). Puro, non tocca disco. Port nativo di token_count.py.",
   category: "other",
   parameters: {
     type: "object",
@@ -18,9 +19,14 @@ export const countTokensDefinition: ToolDefinition<CountTokensInput, CountTokens
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: COUNT_TOKENS_VERSION, since: "0.11.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<CountTokensOutput>> {
-    return withTiming("count_tokens", COUNT_TOKENS_VERSION, () => countTokensLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "COUNT_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "count_tokens",
+      COUNT_TOKENS_VERSION,
+      () => countTokensLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "COUNT_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

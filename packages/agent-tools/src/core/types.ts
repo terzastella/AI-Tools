@@ -9,14 +9,7 @@
 import type { ToolContext } from "./context.js";
 import type { AgentToolResult } from "./result.js";
 
-export type ToolCategory =
-  | "filesystem"
-  | "terminal"
-  | "git"
-  | "database"
-  | "search"
-  | "mcp"
-  | "other";
+export type ToolCategory = "filesystem" | "terminal" | "git" | "database" | "search" | "mcp" | "other";
 
 export interface PermissionRequirement {
   domain: string;

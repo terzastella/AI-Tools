@@ -54,7 +54,7 @@ export async function refsLogic(ctx: ToolContext, input: RefsInput): Promise<Ref
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${p}`), { code: "PATH_TRAVERSAL" });
   }
 
-  let candidates: string[] = [];
+  const candidates: string[] = [];
   for (const p of rawPaths) {
     const r = resolveSafePath(ctx, p);
     if (!r.ok) continue;
@@ -82,7 +82,11 @@ export async function refsLogic(ctx: ToolContext, input: RefsInput): Promise<Ref
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]!;
       // salta la riga di definizione export per non sporcare (la trova goto)
-      if (/^export\s+(?:async\s+)?(?:function|const|let|var|class|interface|type|enum)\s+/.test(line.trim()) && line.includes(symbol)) continue;
+      if (
+        /^export\s+(?:async\s+)?(?:function|const|let|var|class|interface|type|enum)\s+/.test(line.trim()) &&
+        line.includes(symbol)
+      )
+        continue;
       let m: RegExpExecArray | null;
       re.lastIndex = 0;
       while ((m = re.exec(line)) !== null) {

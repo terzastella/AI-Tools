@@ -6,7 +6,8 @@ import { debuggerPermissions } from "./permissions.js";
 export const debuggerDefinition: ToolDefinition<DebuggerInput, DebuggerOutput> = {
   name: "debug_error",
   label: "Debug error",
-  description: "Trova l'errore vero: stack verificato (file esiste) + tsc reale via diagnose. Niente indovinelli: se non trova, dice NO_CANDIDATE.",
+  description:
+    "Trova l'errore vero: stack verificato (file esiste) + tsc reale via diagnose. Niente indovinelli: se non trova, dice NO_CANDIDATE.",
   category: "other",
   parameters: {
     type: "object",
@@ -24,9 +25,14 @@ export const debuggerDefinition: ToolDefinition<DebuggerInput, DebuggerOutput> =
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: DEBUGGER_VERSION, since: "0.4.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<DebuggerOutput>> {
-    return withTiming("debug_error", DEBUGGER_VERSION, () => debuggerLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "DEBUGGER_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "debug_error",
+      DEBUGGER_VERSION,
+      () => debuggerLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "DEBUGGER_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

@@ -21,9 +21,14 @@ export const fileOutlineDefinition: ToolDefinition<FileOutlineInput, FileOutline
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: FILE_OUTLINE_VERSION, since: "0.10.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<FileOutlineOutput>> {
-    return withTiming("file_outline", FILE_OUTLINE_VERSION, () => fileOutlineLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "OUTLINE_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "file_outline",
+      FILE_OUTLINE_VERSION,
+      () => fileOutlineLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "OUTLINE_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

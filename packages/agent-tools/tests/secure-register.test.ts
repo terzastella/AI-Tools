@@ -63,6 +63,8 @@ describe("secure-register", () => {
     const a = wrapDefinition(askUserDefinition, { policy: standardPolicy, audit });
     expect((await f.execute({ args: { pattern: "*.txt", paths: ["src"] }, ctx })).ok).toBe(true);
     expect((await s.execute({ args: { pattern: "hello", paths: ["src"] }, ctx })).ok).toBe(true);
-    expect((await a.execute({ args: { question: "A o B?", options: [{ label: "A" }, { label: "B" }] }, ctx })).ok).toBe(true);
+    expect((await a.execute({ args: { question: "A o B?", options: [{ label: "A" }, { label: "B" }] }, ctx })).ok).toBe(
+      true,
+    );
   });
 });

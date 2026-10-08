@@ -46,7 +46,10 @@ async function findBrowser(): Promise<string | null> {
   return null;
 }
 
-export async function browserSnapshotLogic(ctx: ToolContext, input: BrowserSnapshotInput): Promise<BrowserSnapshotOutput> {
+export async function browserSnapshotLogic(
+  ctx: ToolContext,
+  input: BrowserSnapshotInput,
+): Promise<BrowserSnapshotOutput> {
   const u = parsePublicUrl(input.url ?? "", ctx);
   const timeoutMs = input.timeoutMs ?? 30_000;
   if (!Number.isInteger(timeoutMs) || timeoutMs < 5000 || timeoutMs > 90_000) {
@@ -58,7 +61,9 @@ export async function browserSnapshotLogic(ctx: ToolContext, input: BrowserSnaps
   }
   const browser = await findBrowser();
   if (!browser) {
-    throw Object.assign(new Error("no Chrome/Edge found (set CHROME_PATH) — verifica UI non disponibile"), { code: "BROWSER_MISSING" });
+    throw Object.assign(new Error("no Chrome/Edge found (set CHROME_PATH) — verifica UI non disponibile"), {
+      code: "BROWSER_MISSING",
+    });
   }
 
   ctx.logger.info("browser_snapshot", { url: u.hostname, browser });
@@ -75,7 +80,9 @@ export async function browserSnapshotLogic(ctx: ToolContext, input: BrowserSnaps
   } catch (e: unknown) {
     const err = e as { killed?: boolean; message?: string };
     if (err.killed) throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
-    throw Object.assign(new Error(`browser failed: ${err.message ?? String(e)}`.slice(0, 300)), { code: "BROWSER_FAILED" });
+    throw Object.assign(new Error(`browser failed: ${err.message ?? String(e)}`.slice(0, 300)), {
+      code: "BROWSER_FAILED",
+    });
   }
   const title = /<title[^>]*>([\s\S]{1,300}?)<\/title>/i.exec(html)?.[1]?.replace(/\s+/g, " ").trim() ?? "";
   const text = htmlToText(html);

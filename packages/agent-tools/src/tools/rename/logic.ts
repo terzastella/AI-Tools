@@ -52,7 +52,7 @@ export async function renameLogic(ctx: ToolContext, input: RenameInput): Promise
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${p}`), { code: "PATH_TRAVERSAL" });
   }
 
-  let candidates: string[] = [];
+  const candidates: string[] = [];
   for (const p of rawPaths) {
     const r = resolveSafePath(ctx, p);
     if (!r.ok) continue;

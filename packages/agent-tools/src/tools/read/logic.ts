@@ -23,7 +23,8 @@ export async function readLogic(ctx: ToolContext, input: ReadInput): Promise<Rea
   if (!rel) throw Object.assign(new Error("path is required"), { code: "BAD_ARGS" });
   const offset = input.offset ?? 1;
   const limit = input.limit ?? 200;
-  if (!Number.isInteger(offset) || offset < 1) throw Object.assign(new Error("offset must be >= 1"), { code: "BAD_ARGS" });
+  if (!Number.isInteger(offset) || offset < 1)
+    throw Object.assign(new Error("offset must be >= 1"), { code: "BAD_ARGS" });
   if (!Number.isInteger(limit) || limit < 1 || limit > 1000) {
     throw Object.assign(new Error("limit must be 1..1000"), { code: "BAD_ARGS" });
   }

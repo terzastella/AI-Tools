@@ -30,7 +30,8 @@ function sha256(s: string): string {
 export async function writerLogic(ctx: ToolContext, input: WriterInput): Promise<WriterOutput> {
   const rel = (input.path ?? "").trim();
   if (!rel) throw Object.assign(new Error("path is required"), { code: "BAD_ARGS" });
-  if (typeof input.content !== "string") throw Object.assign(new Error("content must be a string"), { code: "BAD_ARGS" });
+  if (typeof input.content !== "string")
+    throw Object.assign(new Error("content must be a string"), { code: "BAD_ARGS" });
 
   const overwrite = input.overwrite ?? false;
   const mkdirs = input.mkdirs ?? true;

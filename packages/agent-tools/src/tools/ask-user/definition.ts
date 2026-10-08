@@ -22,9 +22,14 @@ export const askUserDefinition: ToolDefinition<AskUserInput, AskUserOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: ASK_USER_VERSION, since: "0.10.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<AskUserOutput>> {
-    return withTiming("ask_user", ASK_USER_VERSION, () => askUserLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "ASK_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "ask_user",
+      ASK_USER_VERSION,
+      () => askUserLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "ASK_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

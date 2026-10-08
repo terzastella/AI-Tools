@@ -6,7 +6,8 @@ import { writerPermissions } from "./permissions.js";
 export const writerDefinition: ToolDefinition<WriterInput, WriterOutput> = {
   name: "create_file",
   label: "Create file",
-  description: "Crea un file da zero con scrittura atomica. Rifiuta overwrite salvo flag, blocca path traversal, supporta dry-run.",
+  description:
+    "Crea un file da zero con scrittura atomica. Rifiuta overwrite salvo flag, blocca path traversal, supporta dry-run.",
   category: "filesystem",
   parameters: {
     type: "object",
@@ -24,9 +25,14 @@ export const writerDefinition: ToolDefinition<WriterInput, WriterOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: WRITER_VERSION, since: "0.1.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<WriterOutput>> {
-    return withTiming("create_file", WRITER_VERSION, () => writerLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "WRITER_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "create_file",
+      WRITER_VERSION,
+      () => writerLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "WRITER_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

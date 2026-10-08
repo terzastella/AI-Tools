@@ -22,9 +22,14 @@ export const chunkTextDefinition: ToolDefinition<ChunkTextInput, ChunkTextOutput
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: CHUNK_TEXT_VERSION, since: "0.11.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<ChunkTextOutput>> {
-    return withTiming("chunk_text", CHUNK_TEXT_VERSION, () => chunkTextLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "CHUNK_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "chunk_text",
+      CHUNK_TEXT_VERSION,
+      () => chunkTextLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "CHUNK_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

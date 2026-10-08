@@ -68,7 +68,8 @@ async function readAll(file: string): Promise<MemoryEntry[]> {
 export async function memoryStoreLogic(ctx: ToolContext, input: MemoryStoreInput): Promise<MemoryStoreOutput> {
   const op = input.op ?? "";
   const scope = input.scope ?? "session";
-  if (scope !== "session" && scope !== "project") throw Object.assign(new Error("scope must be session|project"), { code: "BAD_ARGS" });
+  if (scope !== "session" && scope !== "project")
+    throw Object.assign(new Error("scope must be session|project"), { code: "BAD_ARGS" });
   const file = await fileFor(ctx, scope);
   // sicurezza: il file deve restare dentro cwd
   const r = resolveSafePath(ctx, path.relative(ctx.cwd, file).replace(/\\/g, "/"));
@@ -76,8 +77,14 @@ export async function memoryStoreLogic(ctx: ToolContext, input: MemoryStoreInput
 
   if (op === "put") {
     const text = (input.text ?? "").trim();
-    if (!text || text.length > 5000) throw Object.assign(new Error("text 1..5000 chars required"), { code: "BAD_ARGS" });
-    const entry: MemoryEntry = { id: `m-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6)}`, text, scope, time: new Date().toISOString() };
+    if (!text || text.length > 5000)
+      throw Object.assign(new Error("text 1..5000 chars required"), { code: "BAD_ARGS" });
+    const entry: MemoryEntry = {
+      id: `m-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6)}`,
+      text,
+      scope,
+      time: new Date().toISOString(),
+    };
     await fs.appendFile(file, JSON.stringify(entry) + "\n", "utf8");
     ctx.logger.info("memory_store put", { scope });
     return { op, entry };
@@ -92,7 +99,8 @@ export async function memoryStoreLogic(ctx: ToolContext, input: MemoryStoreInput
     const q = (input.query ?? "").trim();
     if (!q) throw Object.assign(new Error("query required"), { code: "BAD_ARGS" });
     const max = input.maxResults ?? 5;
-    if (!Number.isInteger(max) || max < 1 || max > 20) throw Object.assign(new Error("maxResults must be 1..20"), { code: "BAD_ARGS" });
+    if (!Number.isInteger(max) || max < 1 || max > 20)
+      throw Object.assign(new Error("maxResults must be 1..20"), { code: "BAD_ARGS" });
     const all = await readAll(file);
     const ranked = all
       .map((e) => ({ e, s: score(e.text, q) }))

@@ -28,7 +28,9 @@ describe("editor edit_file", () => {
 
   it("rifiuta ambiguo senza replaceAll", async () => {
     const ctx = createContext(tmp);
-    await expect(editorLogic(ctx, { path: "code.txt", oldString: "line2", newString: "X" })).rejects.toThrow(/matches 2/);
+    await expect(editorLogic(ctx, { path: "code.txt", oldString: "line2", newString: "X" })).rejects.toThrow(
+      /matches 2/,
+    );
   });
 
   it("replaceAll ok", async () => {

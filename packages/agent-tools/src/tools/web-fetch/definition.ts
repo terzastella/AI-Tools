@@ -6,7 +6,8 @@ import { webFetchPermissions } from "./permissions.js";
 export const webFetchDefinition: ToolDefinition<WebFetchInput, WebFetchOutput> = {
   name: "web_fetch",
   label: "Web fetch",
-  description: "Scarica una pagina pubblica (solo http/https, no host privati) e la rende testo con budget. Per docs e API.",
+  description:
+    "Scarica una pagina pubblica (solo http/https, no host privati) e la rende testo con budget. Per docs e API.",
   category: "other",
   parameters: {
     type: "object",
@@ -23,9 +24,14 @@ export const webFetchDefinition: ToolDefinition<WebFetchInput, WebFetchOutput> =
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: WEB_FETCH_VERSION, since: "0.14.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<WebFetchOutput>> {
-    return withTiming("web_fetch", WEB_FETCH_VERSION, () => webFetchLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "FETCH_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "web_fetch",
+      WEB_FETCH_VERSION,
+      () => webFetchLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "FETCH_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

@@ -30,7 +30,10 @@ const RULES: { kind: string; re: RegExp }[] = [
   { kind: "function", re: /^(?:async\s+)?function\s+([A-Za-z_][A-Za-z0-9_]*)/ },
   { kind: "class", re: /^(?:abstract\s+)?class\s+([A-Za-z_][A-Za-z0-9_]*)/ },
   { kind: "const-arrow", re: /^(?:const|let|var)\s+([A-Za-z_][A-Za-z0-9_]*)\s*=/ },
-  { kind: "method", re: /^(?:public|private|protected|async\s+|static\s+)*(?:get\s+|set\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*\(.*\)\s*(?::\s*.+)?\s*\{?\s*$/ },
+  {
+    kind: "method",
+    re: /^(?:public|private|protected|async\s+|static\s+)*(?:get\s+|set\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*\(.*\)\s*(?::\s*.+)?\s*\{?\s*$/,
+  },
 ];
 
 export async function fileOutlineLogic(ctx: ToolContext, input: FileOutlineInput): Promise<FileOutlineOutput> {

@@ -15,7 +15,11 @@ beforeEach(async () => {
   await fs.mkdir(path.join(tmp, "src"), { recursive: true });
   await fs.writeFile(path.join(tmp, "src/a.ts"), "export function hello(name: string) {\n return name;\n}\n", "utf8");
   await fs.writeFile(path.join(tmp, "src/b.ts"), 'import { hello } from "./a";\nconsole.log(hello);\n', "utf8");
-  await fs.writeFile(path.join(tmp, "package.json"), JSON.stringify({ name: "x", scripts: {}, engines: { node: ">=20" } }), "utf8");
+  await fs.writeFile(
+    path.join(tmp, "package.json"),
+    JSON.stringify({ name: "x", scripts: {}, engines: { node: ">=20" } }),
+    "utf8",
+  );
   await fs.writeFile(path.join(tmp, "tsconfig.json"), JSON.stringify({ compilerOptions: { strict: true } }), "utf8");
 });
 

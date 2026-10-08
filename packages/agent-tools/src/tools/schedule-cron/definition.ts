@@ -6,7 +6,8 @@ import { scheduleCronPermissions } from "./permissions.js";
 export const scheduleCronDefinition: ToolDefinition<ScheduleCronInput, ScheduleCronOutput> = {
   name: "schedule_cron",
   label: "Schedule cron",
-  description: "Promemoria schedulati in .agent/schedule (add/list/remove/due). L'agente controlla due a ogni giro; niente esecuzione automatica, l'azione la fai tu o un tool gated.",
+  description:
+    "Promemoria schedulati in .agent/schedule (add/list/remove/due). L'agente controlla due a ogni giro; niente esecuzione automatica, l'azione la fai tu o un tool gated.",
   category: "other",
   parameters: {
     type: "object",
@@ -24,9 +25,14 @@ export const scheduleCronDefinition: ToolDefinition<ScheduleCronInput, ScheduleC
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: SCHEDULE_CRON_VERSION, since: "0.15.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<ScheduleCronOutput>> {
-    return withTiming("schedule_cron", SCHEDULE_CRON_VERSION, () => scheduleCronLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "SCHEDULE_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "schedule_cron",
+      SCHEDULE_CRON_VERSION,
+      () => scheduleCronLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "SCHEDULE_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

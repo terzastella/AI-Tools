@@ -33,7 +33,9 @@ describe("history", () => {
 
   it("restore versione inesistente e traversal", async () => {
     const ctx = createContext(tmp);
-    await expect(historyLogic(ctx, { action: "restore", path: "src/a.txt", versionId: "nope" })).rejects.toThrow(/not found/);
+    await expect(historyLogic(ctx, { action: "restore", path: "src/a.txt", versionId: "nope" })).rejects.toThrow(
+      /not found/,
+    );
     await expect(historyLogic(ctx, { action: "record", path: "../escape" })).rejects.toThrow(/escapes/);
   });
 

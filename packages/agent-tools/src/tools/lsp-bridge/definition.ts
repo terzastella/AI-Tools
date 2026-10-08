@@ -6,7 +6,8 @@ import { lspBridgePermissions } from "./permissions.js";
 export const lspBridgeDefinition: ToolDefinition<LspBridgeInput, LspBridgeOutput> = {
   name: "lsp_bridge",
   label: "LSP bridge",
-  description: "Vero linguaggio-server TypeScript: hover (tipo), references cross-file, rename dry (propone modifiche, non applica). Se manca typescript usa goto/refs.",
+  description:
+    "Vero linguaggio-server TypeScript: hover (tipo), references cross-file, rename dry (propone modifiche, non applica). Se manca typescript usa goto/refs.",
   category: "search",
   parameters: {
     type: "object",
@@ -26,9 +27,14 @@ export const lspBridgeDefinition: ToolDefinition<LspBridgeInput, LspBridgeOutput
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: LSP_BRIDGE_VERSION, since: "0.16.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<LspBridgeOutput>> {
-    return withTiming("lsp_bridge", LSP_BRIDGE_VERSION, () => lspBridgeLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "LSP_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "lsp_bridge",
+      LSP_BRIDGE_VERSION,
+      () => lspBridgeLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "LSP_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

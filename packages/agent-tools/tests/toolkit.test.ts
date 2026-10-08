@@ -11,7 +11,9 @@ describe("toolkit", () => {
   });
 
   it("stesse del secure-register", () => {
-    const secured = secureDefinitions(process.cwd()).map((d) => (d as { name: string }).name).sort();
+    const secured = secureDefinitions(process.cwd())
+      .map((d) => (d as { name: string }).name)
+      .sort();
     const plain = toolkitDefinitions.map((d) => d.name).sort();
     expect(secured).toEqual(plain);
   });

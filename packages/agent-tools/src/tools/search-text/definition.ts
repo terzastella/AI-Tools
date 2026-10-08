@@ -24,9 +24,14 @@ export const searchTextDefinition: ToolDefinition<SearchTextInput, SearchTextOut
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: SEARCH_TEXT_VERSION, since: "0.10.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<SearchTextOutput>> {
-    return withTiming("search_text", SEARCH_TEXT_VERSION, () => searchTextLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "SEARCH_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "search_text",
+      SEARCH_TEXT_VERSION,
+      () => searchTextLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "SEARCH_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

@@ -53,5 +53,12 @@ export async function runSubagentLogic(ctx: ToolContext, input: RunSubagentInput
   if (input.model !== undefined) req.model = input.model;
   const res = await chatWithFallback(ctx, [provider], req);
   ctx.logger.info("run_subagent", { provider: res.provider, goal: goal.slice(0, 80) });
-  return { goal, result: res.text, model: res.model, provider: res.provider, contextChars: contextText.length, truncated: res.text.length >= 50_000 };
+  return {
+    goal,
+    result: res.text,
+    model: res.model,
+    provider: res.provider,
+    contextChars: contextText.length,
+    truncated: res.text.length >= 50_000,
+  };
 }

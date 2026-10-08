@@ -21,7 +21,10 @@ export interface ModelResponse {
 
 export interface ModelProvider {
   name: string;
-  chat(ctx: ToolContext, req: Required<Pick<ModelRequest, "prompt">> & Omit<ModelRequest, "prompt">): Promise<ModelResponse>;
+  chat(
+    ctx: ToolContext,
+    req: Required<Pick<ModelRequest, "prompt">> & Omit<ModelRequest, "prompt">,
+  ): Promise<ModelResponse>;
 }
 
 function fail(code: string, message: string): never {
@@ -32,7 +35,11 @@ export const echoProvider: ModelProvider = {
   name: "echo",
   async chat(_ctx, req) {
     const sys = req.system ? `[system: ${req.system}]\n` : "";
-    return { text: `${sys}[echo:${req.model}]\n${req.prompt}`.slice(0, 20_000), model: req.model ?? "echo", provider: "echo" };
+    return {
+      text: `${sys}[echo:${req.model}]\n${req.prompt}`.slice(0, 20_000),
+      model: req.model ?? "echo",
+      provider: "echo",
+    };
   },
 };
 

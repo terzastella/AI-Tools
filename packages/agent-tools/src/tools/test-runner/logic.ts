@@ -40,7 +40,8 @@ function parseCounts(runner: string, out: string): { passed: number; failed: num
     if (mP) passed = Number(mP[1]);
     if (mF) failed = Number(mF[1]);
   }
-  const summary = failed === 0 && passed === 0 ? "unknown (parse manuale stdout)" : `${passed} passed, ${failed} failed`;
+  const summary =
+    failed === 0 && passed === 0 ? "unknown (parse manuale stdout)" : `${passed} passed, ${failed} failed`;
   return { passed, failed, summary };
 }
 
@@ -82,7 +83,13 @@ export async function testRunnerLogic(ctx: ToolContext, input: TestRunnerInput):
   let stderr = "";
   let code = 0;
   try {
-    const r = await execFileAsync(cmd, args, { cwd, timeout: timeoutMs, windowsHide: true, maxBuffer: 4_000_000, env: scrubEnv(ctx) });
+    const r = await execFileAsync(cmd, args, {
+      cwd,
+      timeout: timeoutMs,
+      windowsHide: true,
+      maxBuffer: 4_000_000,
+      env: scrubEnv(ctx),
+    });
     stdout = String(r.stdout ?? "");
     stderr = String(r.stderr ?? "");
   } catch (e: unknown) {
@@ -96,5 +103,13 @@ export async function testRunnerLogic(ctx: ToolContext, input: TestRunnerInput):
     code = Number(err.code ?? 1);
   }
   const counts = parseCounts(runner, `${stdout}\n${stderr}`);
-  return { runner, code, passed: counts.passed, failed: counts.failed, summary: counts.summary, stdout: stdout.slice(-20_000), stderr: stderr.slice(-5_000) };
+  return {
+    runner,
+    code,
+    passed: counts.passed,
+    failed: counts.failed,
+    summary: counts.summary,
+    stdout: stdout.slice(-20_000),
+    stderr: stderr.slice(-5_000),
+  };
 }

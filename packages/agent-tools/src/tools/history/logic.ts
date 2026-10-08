@@ -63,7 +63,8 @@ async function listVersions(cwd: string, rel: string): Promise<HistoryVersion[]>
 
 export async function historyLogic(ctx: ToolContext, input: HistoryInput): Promise<HistoryOutput> {
   const action = input.action ?? "list";
-  if (!["record", "list", "restore", "clear"].includes(action)) throw Object.assign(new Error("unknown action"), { code: "BAD_ARGS" });
+  if (!["record", "list", "restore", "clear"].includes(action))
+    throw Object.assign(new Error("unknown action"), { code: "BAD_ARGS" });
   const maxVersions = input.maxVersions ?? 20;
   if (!Number.isInteger(maxVersions) || maxVersions < 1 || maxVersions > 100) {
     throw Object.assign(new Error("maxVersions must be 1..100"), { code: "BAD_ARGS" });
@@ -81,7 +82,8 @@ export async function historyLogic(ctx: ToolContext, input: HistoryInput): Promi
       if (st.size > 1_000_000) throw Object.assign(new Error("file too big"), { code: "TOO_BIG" });
       content = await fs.readFile(r.abs, "utf8");
     } catch (e: unknown) {
-      if ((e as NodeJS.ErrnoException)?.code === "ENOENT") throw Object.assign(new Error("file not found"), { code: "NOT_FOUND" });
+      if ((e as NodeJS.ErrnoException)?.code === "ENOENT")
+        throw Object.assign(new Error("file not found"), { code: "NOT_FOUND" });
       throw e;
     }
     const versionId = stamp();
@@ -135,7 +137,8 @@ export async function historyLogic(ctx: ToolContext, input: HistoryInput): Promi
   if (action === "restore") {
     const rel = (input.path ?? "").trim();
     const versionId = (input.versionId ?? "").trim();
-    if (!rel || !versionId) throw Object.assign(new Error("path and versionId required for restore"), { code: "BAD_ARGS" });
+    if (!rel || !versionId)
+      throw Object.assign(new Error("path and versionId required for restore"), { code: "BAD_ARGS" });
     if (!/^[0-9a-zA-Z-]+$/.test(versionId)) throw Object.assign(new Error("bad versionId"), { code: "BAD_ARGS" });
     const r = resolveSafePath(ctx, rel);
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${rel}`), { code: "PATH_TRAVERSAL" });

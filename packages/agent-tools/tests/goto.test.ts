@@ -12,7 +12,7 @@ beforeEach(async () => {
   tmp = await fs.mkdtemp(path.join(os.tmpdir(), "ait-goto-"));
   await fs.mkdir(path.join(tmp, "src"), { recursive: true });
   await fs.writeFile(path.join(tmp, "src/a.ts"), "export function writerLogic() { return 1; }\n", "utf8");
-  await fs.writeFile(path.join(tmp, "src/b.ts"), "import { writerLogic } from \"./a.js\";\nwriterLogic();\n", "utf8");
+  await fs.writeFile(path.join(tmp, "src/b.ts"), 'import { writerLogic } from "./a.js";\nwriterLogic();\n', "utf8");
 });
 
 afterEach(async () => {

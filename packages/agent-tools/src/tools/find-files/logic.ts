@@ -97,7 +97,7 @@ export async function findFilesLogic(ctx: ToolContext, input: FindFilesInput): P
   }
 
   const rx = globToRegExp(pattern);
-  let candidates: string[] = [];
+  const candidates: string[] = [];
   for (const p of rawPaths) {
     const r = resolveSafePath(ctx, p);
     if (!r.ok) continue;

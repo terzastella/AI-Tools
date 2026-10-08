@@ -11,7 +11,7 @@ let tmp: string;
 beforeEach(async () => {
   tmp = await fs.mkdtemp(path.join(os.tmpdir(), "ait-refs-"));
   await fs.writeFile(path.join(tmp, "a.ts"), "export function foo() {}\nfoo();\n", "utf8");
-  await fs.writeFile(path.join(tmp, "b.ts"), "import { foo } from \"./a.js\";\nfoo();\n", "utf8");
+  await fs.writeFile(path.join(tmp, "b.ts"), 'import { foo } from "./a.js";\nfoo();\n', "utf8");
 });
 
 afterEach(async () => {

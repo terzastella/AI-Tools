@@ -16,7 +16,9 @@ import { webFetchDefinition } from "../src/tools/web-fetch/definition.js";
 let tmp: string;
 let servers: Server[] = [];
 
-async function serve(handler: (reqUrl: string, res: { redirect: (loc: string) => void; html: (b: string) => void }) => void): Promise<number> {
+async function serve(
+  handler: (reqUrl: string, res: { redirect: (loc: string) => void; html: (b: string) => void }) => void,
+): Promise<number> {
   const s = createServer((req, res) => {
     handler(req.url ?? "/", {
       redirect: (loc: string) => {
@@ -44,7 +46,11 @@ beforeEach(async () => {
   await fs.writeFile(path.join(tmp, "work", "inside.txt"), "ok\n", "utf8");
   // junction su win (no admin), dir symlink altrove
   try {
-    await fs.symlink(path.join(tmp, "probe"), path.join(tmp, "work", "link"), process.platform === "win32" ? "junction" : "dir");
+    await fs.symlink(
+      path.join(tmp, "probe"),
+      path.join(tmp, "work", "link"),
+      process.platform === "win32" ? "junction" : "dir",
+    );
   } catch {
     /* FS senza symlink: il test salta */
   }
@@ -88,7 +94,18 @@ describe("hardening 1-2-3", () => {
   });
 
   it("isPrivateIp copre loopback, RFC1918 e metadata", () => {
-    for (const h of ["localhost", "127.0.0.1", "0.0.0.0", "10.1.2.3", "172.16.0.1", "172.31.9.9", "192.168.1.1", "169.254.169.254", "::1", "x.localhost"]) {
+    for (const h of [
+      "localhost",
+      "127.0.0.1",
+      "0.0.0.0",
+      "10.1.2.3",
+      "172.16.0.1",
+      "172.31.9.9",
+      "192.168.1.1",
+      "169.254.169.254",
+      "::1",
+      "x.localhost",
+    ]) {
       expect(isPrivateIp(h)).toBe(true);
     }
     for (const h of ["example.com", "8.8.8.8", "1.2.3.4", "172.15.0.1", "172.32.0.1"]) {
@@ -101,7 +118,10 @@ describe("hardening 1-2-3", () => {
     const ctx = createContext(tmp);
     ctx.approver = acceptAllApprover;
     const g = wrapDefinition(bashExecDefinition, { policy: standardPolicy, audit: new MemoryAudit() });
-    const res = await g.execute({ args: { cmd: "node", args: ["-e", "console.log(process.env.AIT_HARD_SECRET || 'clean')"] }, ctx });
+    const res = await g.execute({
+      args: { cmd: "node", args: ["-e", "console.log(process.env.AIT_HARD_SECRET || 'clean')"] },
+      ctx,
+    });
     delete process.env["AIT_HARD_SECRET"];
     expect(res.ok).toBe(true);
     if (res.ok) {
@@ -124,7 +144,9 @@ describe("hardening 1-2-3", () => {
     port = await serve((_u, res) => res.redirect(`http://127.0.0.1:${port}/loop`));
     const ctx = createContext(tmp);
     ctx.allowPrivateNet = true;
-    await expect(resolveRedirects(parsePublicUrl(`http://127.0.0.1:${port}/loop`, ctx), ctx, 5000)).rejects.toMatchObject({ code: "TOO_MANY_REDIRECTS" });
+    await expect(
+      resolveRedirects(parsePublicUrl(`http://127.0.0.1:${port}/loop`, ctx), ctx, 5000),
+    ).rejects.toMatchObject({ code: "TOO_MANY_REDIRECTS" });
   });
 
   it("web_fetch segue redirect validi fino al contenuto", async () => {

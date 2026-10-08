@@ -60,7 +60,14 @@ function matchGlob(fileRel: string, pattern: string): boolean {
   const pat = pattern.replace(/\\/g, "/");
   if (pat === "**" || pat === "*" || pat === "**/*") return true;
   if (!pat.includes("*")) return rel === pat || rel.endsWith("/" + pat);
-  const rx = new RegExp("^" + pat.split("*").map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*") + "$");
+  const rx = new RegExp(
+    "^" +
+      pat
+        .split("*")
+        .map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
+        .join(".*") +
+      "$",
+  );
   return rx.test(rel) || rx.test(path.basename(rel));
 }
 
@@ -151,30 +158,83 @@ export async function reviewerLogic(ctx: ToolContext, input: ReviewerInput): Pro
     const lines = content.split("\n");
 
     if (ruleSet.has("huge-file") && lines.length > 2000) {
-      issues.push({ severity: "warning", path: rel, rule: "huge-file", message: `File has ${lines.length} lines (>2000)`, suggestion: "Split into smaller modules." });
+      issues.push({
+        severity: "warning",
+        path: rel,
+        rule: "huge-file",
+        message: `File has ${lines.length} lines (>2000)`,
+        suggestion: "Split into smaller modules.",
+      });
     }
     if (ruleSet.has("missing-newline-eof") && content.length > 0 && !content.endsWith("\n")) {
-      issues.push({ severity: "info", path: rel, line: lines.length, rule: "missing-newline-eof", message: "Missing newline at end of file.", suggestion: "End file with a newline." });
+      issues.push({
+        severity: "info",
+        path: rel,
+        line: lines.length,
+        rule: "missing-newline-eof",
+        message: "Missing newline at end of file.",
+        suggestion: "End file with a newline.",
+      });
     }
-    const checkLine = ruleSet.has("long-line") || ruleSet.has("no-console-log") || ruleSet.has("todo-fixme") || ruleSet.has("no-any") || ruleSet.has("secret-like");
+    const checkLine =
+      ruleSet.has("long-line") ||
+      ruleSet.has("no-console-log") ||
+      ruleSet.has("todo-fixme") ||
+      ruleSet.has("no-any") ||
+      ruleSet.has("secret-like");
     if (checkLine) {
       for (let i = 0; i < lines.length; i++) {
         const ln = lines[i]!;
         const lineNo = i + 1;
         if (ruleSet.has("long-line") && ln.length > 120) {
-          issues.push({ severity: "info", path: rel, line: lineNo, rule: "long-line", message: `Line too long (${ln.length} > 120).`, suggestion: "Wrap or split the line." });
+          issues.push({
+            severity: "info",
+            path: rel,
+            line: lineNo,
+            rule: "long-line",
+            message: `Line too long (${ln.length} > 120).`,
+            suggestion: "Wrap or split the line.",
+          });
         }
         if (ruleSet.has("no-console-log") && /console\.(log|debug|warn|error)/.test(ln)) {
-          issues.push({ severity: "warning", path: rel, line: lineNo, rule: "no-console-log", message: "console.* found.", suggestion: "Use the injected logger instead." });
+          issues.push({
+            severity: "warning",
+            path: rel,
+            line: lineNo,
+            rule: "no-console-log",
+            message: "console.* found.",
+            suggestion: "Use the injected logger instead.",
+          });
         }
         if (ruleSet.has("todo-fixme") && /(TODO|FIXME)/.test(ln)) {
-          issues.push({ severity: "info", path: rel, line: lineNo, rule: "todo-fixme", message: "TODO/FIXME marker found.", suggestion: "Track it or resolve it." });
+          issues.push({
+            severity: "info",
+            path: rel,
+            line: lineNo,
+            rule: "todo-fixme",
+            message: "TODO/FIXME marker found.",
+            suggestion: "Track it or resolve it.",
+          });
         }
         if (ruleSet.has("no-any") && rel.endsWith(".ts") && /:\s*any\b/.test(ln)) {
-          issues.push({ severity: "warning", path: rel, line: lineNo, rule: "no-any", message: "Explicit 'any' type.", suggestion: "Use a precise type or unknown." });
+          issues.push({
+            severity: "warning",
+            path: rel,
+            line: lineNo,
+            rule: "no-any",
+            message: "Explicit 'any' type.",
+            suggestion: "Use a precise type or unknown.",
+          });
         }
         if (ruleSet.has("secret-like") && SECRET_RE.test(ln)) {
-          issues.push({ severity: "error", path: rel, line: lineNo, rule: "secret-like", message: "Possible hardcoded secret.", suggestion: "Move to env vars." });
+          issues.push({
+            severity: "error",
+            path: rel,
+            line: lineNo,
+            rule: "secret-like",
+            message: "Possible hardcoded secret.",
+            suggestion: "Move to env vars.",
+          });
         }
         if (issues.length > 500) break;
       }

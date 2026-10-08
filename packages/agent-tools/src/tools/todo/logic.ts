@@ -55,7 +55,12 @@ export async function todoLogic(ctx: ToolContext, input: TodoInput): Promise<Tod
   if (action === "add") {
     const text = (input.text ?? "").trim().slice(0, 300);
     if (!text) throw Object.assign(new Error("text is required for add"), { code: "BAD_ARGS" });
-    const item: TodoItem = { id: `t${Date.now().toString(36)}${todos.length}`, text, status: "pending", createdAt: new Date().toISOString() };
+    const item: TodoItem = {
+      id: `t${Date.now().toString(36)}${todos.length}`,
+      text,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    };
     todos.push(item);
     await save(ctx.cwd, todos);
     ctx.logger.info("todo", { action, id: item.id });

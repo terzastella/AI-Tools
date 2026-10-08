@@ -14,7 +14,11 @@ beforeEach(async () => {
   await fs.writeFile(path.join(tmp, "src/writer.ts"), "export function writerLogic() {}\nconsole.log(1);\n", "utf8");
   await fs.writeFile(path.join(tmp, "src/other.ts"), "export const x = 1;\n", "utf8");
   await fs.writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
-  await fs.writeFile(path.join(tmp, "tsconfig.json"), JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }), "utf8");
+  await fs.writeFile(
+    path.join(tmp, "tsconfig.json"),
+    JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }),
+    "utf8",
+  );
 });
 
 afterEach(async () => {
@@ -33,7 +37,11 @@ describe("refactor-plan v1.1 furbo equilibrato", () => {
 
   it("patch su file multi-problema", async () => {
     const ctx = createContext(tmp);
-    await fs.writeFile(path.join(tmp, "src/messy.ts"), "export const a: any = 1;\nconsole.log(a);\n// TODO fix\n", "utf8");
+    await fs.writeFile(
+      path.join(tmp, "src/messy.ts"),
+      "export const a: any = 1;\nconsole.log(a);\n// TODO fix\n",
+      "utf8",
+    );
     const out = await refactorPlanLogic(ctx, { goal: "messy cleanup", paths: ["src"], maxSteps: 5 });
     const step = out.steps.find((s) => s.path.includes("messy"));
     expect(step).toBeDefined();

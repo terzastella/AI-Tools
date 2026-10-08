@@ -21,7 +21,9 @@ export function redactSecrets(text: string): string {
     re.lastIndex = 0;
     out = out.replace(re, (m: string, ...rest: unknown[]) => {
       // gruppi regex meno offset/stringa finali: il primo non vuoto è il prefisso da tenere
-      const prefix = rest.slice(0, -2).find((g): g is string => typeof g === "string" && g.length > 0 && g.length < m.length);
+      const prefix = rest
+        .slice(0, -2)
+        .find((g): g is string => typeof g === "string" && g.length > 0 && g.length < m.length);
       return prefix ? `${prefix}***` : "***";
     });
   }

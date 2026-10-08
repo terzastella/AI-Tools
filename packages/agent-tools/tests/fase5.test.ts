@@ -42,7 +42,10 @@ describe("fase5 loop dev", () => {
     ctx.approver = acceptAllApprover;
     const audit = new MemoryAudit();
     const g = wrapDefinition(shellSessionDefinition, { policy: standardPolicy, audit });
-    const started = await g.execute({ args: { action: "start", cmd: "node", args: ["-e", "console.log('ciao-sessione')"] }, ctx });
+    const started = await g.execute({
+      args: { action: "start", cmd: "node", args: ["-e", "console.log('ciao-sessione')"] },
+      ctx,
+    });
     expect(started.ok).toBe(true);
     if (!started.ok) return;
     const id = started.data.session!.id;

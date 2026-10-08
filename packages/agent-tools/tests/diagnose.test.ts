@@ -11,7 +11,11 @@ let tmp: string;
 beforeEach(async () => {
   tmp = await fs.mkdtemp(path.join(os.tmpdir(), "ait-diag-"));
   await fs.writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
-  await fs.writeFile(path.join(tmp, "tsconfig.json"), JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }), "utf8");
+  await fs.writeFile(
+    path.join(tmp, "tsconfig.json"),
+    JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }),
+    "utf8",
+  );
   await fs.writeFile(path.join(tmp, "good.ts"), "export const x: number = 1;\n", "utf8");
 });
 

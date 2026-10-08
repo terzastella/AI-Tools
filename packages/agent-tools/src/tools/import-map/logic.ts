@@ -51,7 +51,7 @@ export async function importMapLogic(ctx: ToolContext, input: ImportMapInput): P
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${p}`), { code: "PATH_TRAVERSAL" });
   }
 
-  let candidates: string[] = [];
+  const candidates: string[] = [];
   for (const p of rawPaths) {
     const r = resolveSafePath(ctx, p);
     if (!r.ok) continue;

@@ -25,9 +25,18 @@ export interface ListOutput {
 
 export const LIST_VERSION = "1.0.0";
 
-async function walk(absDir: string, cwd: string, relBase: string, out: ListEntry[], max: number, includeHidden: boolean): Promise<boolean> {
+async function walk(
+  absDir: string,
+  cwd: string,
+  relBase: string,
+  out: ListEntry[],
+  max: number,
+  includeHidden: boolean,
+): Promise<boolean> {
   const entries = await fs.readdir(absDir, { withFileTypes: true });
-  entries.sort((a, b) => (a.isDirectory() === b.isDirectory() ? a.name.localeCompare(b.name) : a.isDirectory() ? -1 : 1));
+  entries.sort((a, b) =>
+    a.isDirectory() === b.isDirectory() ? a.name.localeCompare(b.name) : a.isDirectory() ? -1 : 1,
+  );
   for (const e of entries) {
     if (out.length >= max) return true;
     if (!includeHidden && e.name.startsWith(".")) continue;
@@ -77,7 +86,9 @@ export async function listLogic(ctx: ToolContext, input: ListInput): Promise<Lis
   let truncated = false;
   if (!recursive) {
     const dirents = await fs.readdir(r.abs, { withFileTypes: true });
-    dirents.sort((a, b) => (a.isDirectory() === b.isDirectory() ? a.name.localeCompare(b.name) : a.isDirectory() ? -1 : 1));
+    dirents.sort((a, b) =>
+      a.isDirectory() === b.isDirectory() ? a.name.localeCompare(b.name) : a.isDirectory() ? -1 : 1,
+    );
     for (const e of dirents) {
       if (entries.length >= maxEntries) {
         truncated = true;

@@ -27,7 +27,11 @@ export const SEARCH_PRO_VERSION = "1.0.0";
 const EXCLUDE = new Set(["node_modules", "dist", ".git", "coverage", ".agent"]);
 
 function tokenize(q: string): string[] {
-  return q.toLowerCase().split(/[^a-z0-9_]+/g).filter((t) => t.length >= 2).slice(0, 15);
+  return q
+    .toLowerCase()
+    .split(/[^a-z0-9_]+/g)
+    .filter((t) => t.length >= 2)
+    .slice(0, 15);
 }
 
 async function walk(absDir: string, cwd: string, out: string[], limit: number): Promise<void> {
@@ -54,7 +58,7 @@ export async function searchProLogic(ctx: ToolContext, input: SearchProInput): P
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${p}`), { code: "PATH_TRAVERSAL" });
   }
   const tokens = tokenize(query);
-  let candidates: string[] = [];
+  const candidates: string[] = [];
   for (const p of rawPaths) {
     const r = resolveSafePath(ctx, p);
     if (!r.ok) continue;
@@ -89,7 +93,14 @@ export async function searchProLogic(ctx: ToolContext, input: SearchProInput): P
         count++;
         if (snippets.length < maxSnippets) {
           const start = Math.max(0, idx - 60);
-          snippets.push("…" + content.slice(start, idx + 120).replace(/\n/g, " ").slice(0, 180) + "…");
+          snippets.push(
+            "…" +
+              content
+                .slice(start, idx + 120)
+                .replace(/\n/g, " ")
+                .slice(0, 180) +
+              "…",
+          );
         }
         idx += t.length;
       }

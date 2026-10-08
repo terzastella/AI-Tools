@@ -52,7 +52,8 @@ async function loadTs(): Promise<any | null> {
 
 function offsetOf(content: string, line1: number, char1: number): number {
   const lines = content.split("\n");
-  if (line1 < 1 || line1 > lines.length) throw Object.assign(new Error(`line out of range 1..${lines.length}`), { code: "BAD_ARGS" });
+  if (line1 < 1 || line1 > lines.length)
+    throw Object.assign(new Error(`line out of range 1..${lines.length}`), { code: "BAD_ARGS" });
   const text = lines[line1 - 1] ?? "";
   let col = char1;
   if (!Number.isInteger(col) || col < 1) {
@@ -100,7 +101,6 @@ async function projectFiles(ctx: ToolContext): Promise<string[]> {
   return out;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function snippetOf(content: string, offset: number): { line: number; character: number; snippet: string } {
   const before = content.slice(0, offset).split("\n");
   const line = before.length;
@@ -113,13 +113,15 @@ function snippetOf(content: string, offset: number): { line: number; character: 
   return { line, character, snippet };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function lspBridgeLogic(ctx: ToolContext, input: LspBridgeInput): Promise<LspBridgeOutput> {
   const ts = await loadTs();
   if (!ts) {
-    throw Object.assign(new Error("typescript module not found: install typescript per LSP vero (fallback: goto/refs)"), {
-      code: "TYPESCRIPT_MISSING",
-    });
+    throw Object.assign(
+      new Error("typescript module not found: install typescript per LSP vero (fallback: goto/refs)"),
+      {
+        code: "TYPESCRIPT_MISSING",
+      },
+    );
   }
   const op = input.op ?? "";
   if (op !== "hover" && op !== "references" && op !== "rename") {
@@ -207,14 +209,20 @@ export async function lspBridgeLogic(ctx: ToolContext, input: LspBridgeInput): P
     for (const ref of refs.slice(0, maxResults)) {
       const fContent = readCached(ref.fileName);
       const s = snippetOf(fContent, ref.textSpan.start);
-      out.push({ path: path.relative(ctx.cwd, ref.fileName).replace(/\\/g, "/") || ".", line: s.line, character: s.character, snippet: s.snippet });
+      out.push({
+        path: path.relative(ctx.cwd, ref.fileName).replace(/\\/g, "/") || ".",
+        line: s.line,
+        character: s.character,
+        snippet: s.snippet,
+      });
     }
     return { op, references: out, truncated: refs.length > maxResults };
   }
 
   // rename dry: propone modifiche, non le applica (le applichi tu con edit_many)
   const newName = (input.newName ?? "").trim();
-  if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(newName)) throw Object.assign(new Error("newName must be a valid identifier"), { code: "BAD_ARGS" });
+  if (!/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(newName))
+    throw Object.assign(new Error("newName must be a valid identifier"), { code: "BAD_ARGS" });
   const locs = ls.findRenameLocations(r.abs, offset, false, false) ?? [];
   const edits: LspRenameEdit[] = [];
   for (const loc of locs.slice(0, maxResults)) {

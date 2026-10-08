@@ -6,7 +6,8 @@ import { mcpCallPermissions } from "./permissions.js";
 export const mcpCallDefinition: ToolDefinition<McpCallInput, McpCallOutput> = {
   name: "mcp_call",
   label: "MCP call",
-  description: "Chiama un tool di un server MCP via stdio (initialize + tools/list + tools/call). Config in mcp-servers.json. Serve sempre accept umano.",
+  description:
+    "Chiama un tool di un server MCP via stdio (initialize + tools/list + tools/call). Config in mcp-servers.json. Serve sempre accept umano.",
   category: "mcp",
   parameters: {
     type: "object",
@@ -24,9 +25,14 @@ export const mcpCallDefinition: ToolDefinition<McpCallInput, McpCallOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: MCP_CALL_VERSION, since: "0.12.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<McpCallOutput>> {
-    return withTiming("mcp_call", MCP_CALL_VERSION, () => mcpCallLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "MCP_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "mcp_call",
+      MCP_CALL_VERSION,
+      () => mcpCallLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "MCP_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

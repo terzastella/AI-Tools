@@ -20,9 +20,14 @@ export const checkConfigDefinition: ToolDefinition<CheckConfigInput, CheckConfig
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: CHECK_CONFIG_VERSION, since: "0.10.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<CheckConfigOutput>> {
-    return withTiming("check_config", CHECK_CONFIG_VERSION, () => checkConfigLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "CHECK_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "check_config",
+      CHECK_CONFIG_VERSION,
+      () => checkConfigLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "CHECK_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

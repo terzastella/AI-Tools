@@ -6,7 +6,8 @@ import { applyPatchPermissions } from "./permissions.js";
 export const applyPatchDefinition: ToolDefinition<ApplyPatchInput, ApplyPatchOutput> = {
   name: "apply_patch",
   label: "Apply patch",
-  description: "Applica unified diff multi-file/multi-hunk con verifica contesto. Supporta dry-run. Non duplicato del core: edit_file fa single-string, questo fa patch.",
+  description:
+    "Applica unified diff multi-file/multi-hunk con verifica contesto. Supporta dry-run. Non duplicato del core: edit_file fa single-string, questo fa patch.",
   category: "filesystem",
   parameters: {
     type: "object",
@@ -22,9 +23,14 @@ export const applyPatchDefinition: ToolDefinition<ApplyPatchInput, ApplyPatchOut
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: APPLY_PATCH_VERSION, since: "0.6.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<ApplyPatchOutput>> {
-    return withTiming("apply_patch", APPLY_PATCH_VERSION, () => applyPatchLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "PATCH_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "apply_patch",
+      APPLY_PATCH_VERSION,
+      () => applyPatchLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "PATCH_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

@@ -31,7 +31,11 @@ beforeEach(async () => {
   } catch {
     throw new Error("dist mancante: esegui 'pnpm build' prima (o usa pnpm test con pretest)");
   }
-  child = spawn("node", [SERVER], { env: { ...process.env, AI_TOOLS_CWD: tmp }, windowsHide: true, stdio: ["pipe", "pipe", "pipe"] });
+  child = spawn("node", [SERVER], {
+    env: { ...process.env, AI_TOOLS_CWD: tmp },
+    windowsHide: true,
+    stdio: ["pipe", "pipe", "pipe"],
+  });
   const rl = readline.createInterface({ input: child.stdout!, crlfDelay: Infinity });
   rl.on("line", (line) => {
     const s = line.trim();
@@ -86,7 +90,10 @@ describe("mcp server ai-tools", () => {
   it("policy-only: scrittura in scope passa senza approver (i permessi li chiede opencode)", async () => {
     await call("initialize", {});
     await fs.mkdir(path.join(tmp, "src"), { recursive: true });
-    const res = (await call("tools/call", { name: "create_file", arguments: { path: "src/da-mcp.txt", content: "ciao\n" } })) as {
+    const res = (await call("tools/call", {
+      name: "create_file",
+      arguments: { path: "src/da-mcp.txt", content: "ciao\n" },
+    })) as {
       content: { text: string }[];
     };
     expect(res.content[0]!.text).toContain("src/da-mcp.txt");

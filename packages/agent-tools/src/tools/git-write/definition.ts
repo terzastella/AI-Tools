@@ -6,7 +6,8 @@ import { gitWritePermissions } from "./permissions.js";
 export const gitWriteDefinition: ToolDefinition<GitWriteInput, GitWriteOutput> = {
   name: "git_write",
   label: "Git write",
-  description: "Scrive sul repo locale: add, commit, branch, checkout, stash. Mai push/fetch (li fai tu dall'App). Serve sempre accept umano.",
+  description:
+    "Scrive sul repo locale: add, commit, branch, checkout, stash. Mai push/fetch (li fai tu dall'App). Serve sempre accept umano.",
   category: "git",
   parameters: {
     type: "object",
@@ -25,9 +26,14 @@ export const gitWriteDefinition: ToolDefinition<GitWriteInput, GitWriteOutput> =
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: GIT_WRITE_VERSION, since: "0.13.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<GitWriteOutput>> {
-    return withTiming("git_write", GIT_WRITE_VERSION, () => gitWriteLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "GIT_WRITE_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "git_write",
+      GIT_WRITE_VERSION,
+      () => gitWriteLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "GIT_WRITE_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

@@ -27,7 +27,6 @@ export interface ScheduleCronOutput {
 
 export const SCHEDULE_CRON_VERSION = "1.0.0";
 
-const FILE = ".agent/schedule/cron.jsonl";
 const FIELD_RE = /^(\*|\*\/\d+|\d+(?:-\d+)?(?:,\d+(?:-\d+)?)*)$/;
 
 function parseField(raw: string, min: number, max: number): Set<number> | null {
@@ -127,9 +126,17 @@ export async function scheduleCronLogic(ctx: ToolContext, input: ScheduleCronInp
   if (op === "add") {
     const task = (input.task ?? "").trim();
     const cron = (input.cron ?? "").trim();
-    if (!task || task.length > 1000) throw Object.assign(new Error("task 1..1000 chars required"), { code: "BAD_ARGS" });
-    if (!validCron(cron)) throw Object.assign(new Error("cron deve avere 5 campi validi (min hour dom month dow)"), { code: "BAD_ARGS" });
-    const item: CronItem = { id: `c-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6)}`, task, cron, createdAt: new Date().toISOString(), lastRunAt: null };
+    if (!task || task.length > 1000)
+      throw Object.assign(new Error("task 1..1000 chars required"), { code: "BAD_ARGS" });
+    if (!validCron(cron))
+      throw Object.assign(new Error("cron deve avere 5 campi validi (min hour dom month dow)"), { code: "BAD_ARGS" });
+    const item: CronItem = {
+      id: `c-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6)}`,
+      task,
+      cron,
+      createdAt: new Date().toISOString(),
+      lastRunAt: null,
+    };
     items.push(item);
     await saveFile(file, items);
     ctx.logger.info("schedule_cron add", { cron });
@@ -141,7 +148,8 @@ export async function scheduleCronLogic(ctx: ToolContext, input: ScheduleCronInp
   if (op === "remove") {
     const before = items.length;
     const rest = items.filter((e) => e.id !== input.id);
-    if (rest.length === before) throw Object.assign(new Error(`schedule not found: ${input.id}`), { code: "NOT_FOUND" });
+    if (rest.length === before)
+      throw Object.assign(new Error(`schedule not found: ${input.id}`), { code: "NOT_FOUND" });
     await saveFile(file, rest);
     return { op, removed: true };
   }

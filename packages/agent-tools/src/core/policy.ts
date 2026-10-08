@@ -21,7 +21,14 @@ export function matchTargetGlob(relPosix: string, pattern: string): boolean {
   const pat = pattern.replace(/\\/g, "/");
   if (pat === "**" || pat === "*") return true;
   if (!pat.includes("*")) return rel === pat || rel.startsWith(pat.replace(/\/$/, "") + "/");
-  const rx = new RegExp("^" + pat.split("*").map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*") + "$");
+  const rx = new RegExp(
+    "^" +
+      pat
+        .split("*")
+        .map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
+        .join(".*") +
+      "$",
+  );
   return rx.test(rel);
 }
 
@@ -40,7 +47,10 @@ export function checkPolicy(
 ): { allow: boolean; reason: string } {
   for (const d of policy.deny) {
     if (ruleMatches(d, perm, targetRel)) {
-      return { allow: false, reason: `denied by rule ${d.domain}:${d.action}${d.targetGlob ? ":" + d.targetGlob : ""}` };
+      return {
+        allow: false,
+        reason: `denied by rule ${d.domain}:${d.action}${d.targetGlob ? ":" + d.targetGlob : ""}`,
+      };
     }
   }
   for (const a of policy.allow) {

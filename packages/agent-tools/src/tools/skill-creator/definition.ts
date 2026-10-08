@@ -6,7 +6,8 @@ import { skillCreatorPermissions } from "./permissions.js";
 export const skillCreatorDefinition: ToolDefinition<SkillCreatorInput, SkillCreatorOutput> = {
   name: "create_skill",
   label: "Create skill",
-  description: "Meta-tool: genera scaffold di un nuovo ToolDefinition (logic+definition+permissions+index+test stub) conforme al core. Default dry-run, write:true per scrivere.",
+  description:
+    "Meta-tool: genera scaffold di un nuovo ToolDefinition (logic+definition+permissions+index+test stub) conforme al core. Default dry-run, write:true per scrivere.",
   category: "other",
   parameters: {
     type: "object",
@@ -25,9 +26,14 @@ export const skillCreatorDefinition: ToolDefinition<SkillCreatorInput, SkillCrea
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: SKILL_CREATOR_VERSION, since: "0.5.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<SkillCreatorOutput>> {
-    return withTiming("create_skill", SKILL_CREATOR_VERSION, () => skillCreatorLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "SKILL_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "create_skill",
+      SKILL_CREATOR_VERSION,
+      () => skillCreatorLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "SKILL_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

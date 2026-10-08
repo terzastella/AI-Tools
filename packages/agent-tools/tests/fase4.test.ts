@@ -27,7 +27,10 @@ describe("fase4 mcp_call via MCP", () => {
     const ctx = createContext(PKG);
     ctx.approver = acceptAllApprover;
     const g = wrapDefinition(mcpCallDefinition, { policy: standardPolicy, audit: new MemoryAudit() });
-    const res = await g.execute({ args: { server: "echo", tool: "echo", args: { hello: "mondo" }, config: ECHO_CONFIG }, ctx });
+    const res = await g.execute({
+      args: { server: "echo", tool: "echo", args: { hello: "mondo" }, config: ECHO_CONFIG },
+      ctx,
+    });
     expect(res.ok).toBe(true);
     if (res.ok) {
       expect(res.data.server).toBe("echo");

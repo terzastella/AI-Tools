@@ -167,7 +167,10 @@ export async function debuggerLogic(ctx: ToolContext, input: DebuggerInput): Pro
 
   // 4. Niente di verificato → dillo chiaro, non indovinare
   if (candidates.length === 0) {
-    throw Object.assign(new Error("NO_CANDIDATE: no verified candidate found (tsc pulito e nessuno stack verificato)"), { code: "NO_CANDIDATE" });
+    throw Object.assign(
+      new Error("NO_CANDIDATE: no verified candidate found (tsc pulito e nessuno stack verificato)"),
+      { code: "NO_CANDIDATE" },
+    );
   }
 
   candidates.sort((a, b) => b.score - a.score);

@@ -44,8 +44,11 @@ export async function webFetchLogic(ctx: ToolContext, input: WebFetchInput): Pro
     try {
       return await fetch(target, { signal: ctrl.signal, redirect: "manual", headers });
     } catch (e: unknown) {
-      if (e instanceof Error && e.name === "AbortError") throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
-      throw Object.assign(new Error(`fetch failed: ${e instanceof Error ? e.message : String(e)}`), { code: "FETCH_FAILED" });
+      if (e instanceof Error && e.name === "AbortError")
+        throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
+      throw Object.assign(new Error(`fetch failed: ${e instanceof Error ? e.message : String(e)}`), {
+        code: "FETCH_FAILED",
+      });
     }
   };
   let res: Response;
@@ -55,7 +58,11 @@ export async function webFetchLogic(ctx: ToolContext, input: WebFetchInput): Pro
       // il server cambia idea tra HEAD e GET: un hop extra, sempre rivalidato
       const loc = res.headers.get("location");
       if (!loc) throw Object.assign(new Error("redirect without location"), { code: "BAD_REDIRECT" });
-      const hop = await resolveRedirects(parsePublicUrl(new URL(loc, final).toString(), ctx), ctx, Math.min(timeoutMs, 15_000));
+      const hop = await resolveRedirects(
+        parsePublicUrl(new URL(loc, final).toString(), ctx),
+        ctx,
+        Math.min(timeoutMs, 15_000),
+      );
       res = await doGet(hop);
     }
   } finally {
@@ -81,5 +88,12 @@ export async function webFetchLogic(ctx: ToolContext, input: WebFetchInput): Pro
     text = htmlToText(raw);
   }
   const truncated = text.length > maxChars;
-  return { url: input.url, finalUrl: res.url, status: res.status, contentType, text: text.slice(0, maxChars), truncated };
+  return {
+    url: input.url,
+    finalUrl: res.url,
+    status: res.status,
+    contentType,
+    text: text.slice(0, maxChars),
+    truncated,
+  };
 }

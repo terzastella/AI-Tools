@@ -74,14 +74,17 @@ export async function editManyLogic(ctx: ToolContext, input: EditManyInput): Pro
       throw e;
     }
     const occurrences = countOccurrences(before, item.oldString);
-    if (occurrences === 0) throw Object.assign(new Error(`oldString not found in ${item.path}`), { code: "CONTEXT_MISMATCH" });
+    if (occurrences === 0)
+      throw Object.assign(new Error(`oldString not found in ${item.path}`), { code: "CONTEXT_MISMATCH" });
     const replaceAll = item.replaceAll ?? false;
     if (occurrences > 1 && !replaceAll) {
       throw Object.assign(new Error(`oldString matches ${occurrences} times in ${item.path} (use replaceAll:true)`), {
         code: "AMBIGUOUS",
       });
     }
-    const after = replaceAll ? before.split(item.oldString).join(item.newString) : before.replace(item.oldString, item.newString);
+    const after = replaceAll
+      ? before.split(item.oldString).join(item.newString)
+      : before.replace(item.oldString, item.newString);
     befores.push(before);
     afters.push(after);
     counts.push(replaceAll ? occurrences : 1);

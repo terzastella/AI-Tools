@@ -73,8 +73,11 @@ export async function resolveRedirects(start: URL, ctx: ToolContext, timeoutMs: 
       res = await fetch(current, { method: "HEAD", signal: ctrl.signal, redirect: "manual" });
     } catch (e: unknown) {
       clearTimeout(timer);
-      if (e instanceof Error && e.name === "AbortError") throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
-      throw Object.assign(new Error(`fetch failed: ${e instanceof Error ? e.message : String(e)}`), { code: "FETCH_FAILED" });
+      if (e instanceof Error && e.name === "AbortError")
+        throw Object.assign(new Error(`timeout after ${timeoutMs}ms`), { code: "TIMEOUT" });
+      throw Object.assign(new Error(`fetch failed: ${e instanceof Error ? e.message : String(e)}`), {
+        code: "FETCH_FAILED",
+      });
     } finally {
       clearTimeout(timer);
     }

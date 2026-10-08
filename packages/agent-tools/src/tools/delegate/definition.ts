@@ -6,7 +6,8 @@ import { delegatePermissions } from "./permissions.js";
 export const delegateDefinition: ToolDefinition<DelegateInput, DelegateOutput> = {
   name: "delegate_task",
   label: "Delegate task",
-  description: "Capo-cantiere planning-only (NON chiama LLM): fa piano, registra todo, verifica file. Non scrive codice, propone. Per sub-agent veri che ragionano usa run_subagent.",
+  description:
+    "Capo-cantiere planning-only (NON chiama LLM): fa piano, registra todo, verifica file. Non scrive codice, propone. Per sub-agent veri che ragionano usa run_subagent.",
   category: "other",
   parameters: {
     type: "object",
@@ -18,9 +19,14 @@ export const delegateDefinition: ToolDefinition<DelegateInput, DelegateOutput> =
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: DELEGATE_VERSION, since: "0.9.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<DelegateOutput>> {
-    return withTiming("delegate_task", DELEGATE_VERSION, () => delegateLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "DELEGATE_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "delegate_task",
+      DELEGATE_VERSION,
+      () => delegateLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "DELEGATE_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

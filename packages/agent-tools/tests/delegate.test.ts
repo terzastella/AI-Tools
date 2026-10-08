@@ -13,7 +13,11 @@ beforeEach(async () => {
   await fs.mkdir(path.join(tmp, "src"), { recursive: true });
   await fs.writeFile(path.join(tmp, "src/writer.ts"), "export function writerLogic() {}\n", "utf8");
   await fs.writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
-  await fs.writeFile(path.join(tmp, "tsconfig.json"), JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }), "utf8");
+  await fs.writeFile(
+    path.join(tmp, "tsconfig.json"),
+    JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }),
+    "utf8",
+  );
 });
 
 afterEach(async () => {

@@ -53,7 +53,14 @@ function matchGlob(fileRel: string, pattern: string): boolean {
   if (pat === "**" || pat === "*" || pat === "**/*") return true;
   if (!pat.includes("*")) return rel === pat || rel.endsWith("/" + pat);
   // escape regex tranne *
-  const rx = new RegExp("^" + pat.split("*").map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*") + "$");
+  const rx = new RegExp(
+    "^" +
+      pat
+        .split("*")
+        .map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&"))
+        .join(".*") +
+      "$",
+  );
   return rx.test(rel) || rx.test(path.basename(rel));
 }
 

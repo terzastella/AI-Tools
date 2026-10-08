@@ -74,7 +74,8 @@ export async function imageReadLogic(ctx: ToolContext, input: ImageReadInput): P
   if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${rel}`), { code: "PATH_TRAVERSAL" });
   const ext = path.extname(r.abs).toLowerCase();
   const mime = MIME[ext];
-  if (!mime) throw Object.assign(new Error(`unsupported type ${ext || "(none)"} (png/jpg/webp/gif/pdf)`), { code: "BAD_TYPE" });
+  if (!mime)
+    throw Object.assign(new Error(`unsupported type ${ext || "(none)"} (png/jpg/webp/gif/pdf)`), { code: "BAD_TYPE" });
 
   let st;
   try {

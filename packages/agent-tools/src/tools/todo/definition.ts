@@ -10,7 +10,11 @@ export const todoDefinition: ToolDefinition<TodoInput, TodoOutput> = {
   category: "other",
   parameters: {
     type: "object",
-    properties: { action: { type: "string", enum: ["add", "list", "complete", "clear"] }, text: { type: "string" }, id: { type: "string" } },
+    properties: {
+      action: { type: "string", enum: ["add", "list", "complete", "clear"] },
+      text: { type: "string" },
+      id: { type: "string" },
+    },
     required: [],
     additionalProperties: false,
   },
@@ -18,9 +22,14 @@ export const todoDefinition: ToolDefinition<TodoInput, TodoOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: TODO_VERSION, since: "0.9.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<TodoOutput>> {
-    return withTiming("todo", TODO_VERSION, () => todoLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "TODO_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "todo",
+      TODO_VERSION,
+      () => todoLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "TODO_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

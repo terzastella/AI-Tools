@@ -21,7 +21,11 @@ beforeEach(async () => {
   await fs.mkdir(path.join(tmp, "src"), { recursive: true });
   await fs.writeFile(path.join(tmp, "src", "a.txt"), "pubblico\n", "utf8");
   try {
-    await fs.symlink(path.join(tmp, ".."), path.join(tmp, "src", "escape"), process.platform === "win32" ? "junction" : "dir");
+    await fs.symlink(
+      path.join(tmp, ".."),
+      path.join(tmp, "src", "escape"),
+      process.platform === "win32" ? "junction" : "dir",
+    );
   } catch {
     /* senza symlink: il relativo test salta */
   }
@@ -41,11 +45,31 @@ describe("adversarial e2e: l'attaccante perde sempre", () => {
 
   it("audit FileAudit scrive catena verificabile e redatta", async () => {
     const audit = new FileAudit(tmp);
-    await audit.write({ time: new Date().toISOString(), tool: "bash_exec", ok: false, durationMs: 1, decision: "deny", reason: "dangerous command blocked: rm -rf / api_key='abcd1234efgh'", cwd: tmp });
-    await audit.write({ time: new Date().toISOString(), tool: "read_file", ok: true, durationMs: 1, decision: "allow", cwd: tmp });
+    await audit.write({
+      time: new Date().toISOString(),
+      tool: "bash_exec",
+      ok: false,
+      durationMs: 1,
+      decision: "deny",
+      reason: "dangerous command blocked: rm -rf / api_key='abcd1234efgh'",
+      cwd: tmp,
+    });
+    await audit.write({
+      time: new Date().toISOString(),
+      tool: "read_file",
+      ok: true,
+      durationMs: 1,
+      decision: "allow",
+      cwd: tmp,
+    });
     const today = new Date();
     const p = (n: number): string => String(n).padStart(2, "0");
-    const file = path.join(tmp, ".agent", "audit", `ai-toolkit-${today.getFullYear()}-${p(today.getMonth() + 1)}-${p(today.getDate())}.jsonl`);
+    const file = path.join(
+      tmp,
+      ".agent",
+      "audit",
+      `ai-toolkit-${today.getFullYear()}-${p(today.getMonth() + 1)}-${p(today.getDate())}.jsonl`,
+    );
     const v = await verifyAuditFile(file);
     expect(v.ok).toBe(true);
     expect(v.checked).toBe(2);
@@ -60,7 +84,12 @@ describe("adversarial e2e: l'attaccante perde sempre", () => {
     await audit.write({ time: "t2", tool: "b", ok: true, durationMs: 1, decision: "allow", cwd: tmp });
     const today = new Date();
     const p = (n: number): string => String(n).padStart(2, "0");
-    const file = path.join(tmp, ".agent", "audit", `ai-toolkit-${today.getFullYear()}-${p(today.getMonth() + 1)}-${p(today.getDate())}.jsonl`);
+    const file = path.join(
+      tmp,
+      ".agent",
+      "audit",
+      `ai-toolkit-${today.getFullYear()}-${p(today.getMonth() + 1)}-${p(today.getDate())}.jsonl`,
+    );
     const raw = await fs.readFile(file, "utf8");
     const lines = raw.split("\n").filter(Boolean);
     const evil = JSON.parse(lines[0]!) as Record<string, unknown>;

@@ -34,7 +34,11 @@ function fail(code: string, message: string): never {
   throw Object.assign(new Error(message), { code });
 }
 
-async function loadServer(ctx: ToolContext, configRel: string, name: string): Promise<{ cfg: McpServerConfig; configFile: string }> {
+async function loadServer(
+  ctx: ToolContext,
+  configRel: string,
+  name: string,
+): Promise<{ cfg: McpServerConfig; configFile: string }> {
   const r = resolveSafePath(ctx, configRel);
   if (!r.ok) fail("PATH_TRAVERSAL", `config escapes cwd: ${configRel}`);
   let raw: string;
@@ -84,7 +88,12 @@ class McpStdio {
     for (const [k, v] of Object.entries(env)) {
       if (typeof v === "string") extra[k] = v;
     }
-    this.child = spawn(command, args, { cwd: ctx.cwd, env: scrubEnv(ctx, extra), windowsHide: true, stdio: ["pipe", "pipe", "pipe"] });
+    this.child = spawn(command, args, {
+      cwd: ctx.cwd,
+      env: scrubEnv(ctx, extra),
+      windowsHide: true,
+      stdio: ["pipe", "pipe", "pipe"],
+    });
     const rl = readline.createInterface({ input: this.child.stdout!, crlfDelay: Infinity });
     rl.on("line", (line) => this.onLine(line));
     this.child.on("error", (e) => this.onError(e));
@@ -94,7 +103,11 @@ class McpStdio {
   private onError(e: unknown): void {
     for (const [, p] of this.pending) {
       clearTimeout(p.timer);
-      p.reject(Object.assign(new Error(`mcp spawn failed: ${e instanceof Error ? e.message : String(e)}`), { code: "SPAWN_FAILED" }));
+      p.reject(
+        Object.assign(new Error(`mcp spawn failed: ${e instanceof Error ? e.message : String(e)}`), {
+          code: "SPAWN_FAILED",
+        }),
+      );
     }
     this.pending.clear();
   }
@@ -113,7 +126,12 @@ class McpStdio {
     if (!p) return;
     this.pending.delete(msg.id);
     clearTimeout(p.timer);
-    if (msg.error) p.reject(Object.assign(new Error(`mcp error ${msg.error.code ?? ""}: ${msg.error.message ?? "unknown"}`), { code: "MCP_ERROR" }));
+    if (msg.error)
+      p.reject(
+        Object.assign(new Error(`mcp error ${msg.error.code ?? ""}: ${msg.error.message ?? "unknown"}`), {
+          code: "MCP_ERROR",
+        }),
+      );
     else p.resolve(msg.result);
   }
 
@@ -147,11 +165,13 @@ export async function mcpCallLogic(ctx: ToolContext, input: McpCallInput): Promi
   const tool = (input.tool ?? "").trim();
   if (!server) fail("BAD_ARGS", "server is required");
   if (!tool) fail("BAD_ARGS", "tool is required");
-  if (/[^a-zA-Z0-9_.-]/.test(server) || /[^a-zA-Z0-9_.-]/.test(tool)) fail("BAD_ARGS", "server/tool solo [a-zA-Z0-9_.-]");
+  if (/[^a-zA-Z0-9_.-]/.test(server) || /[^a-zA-Z0-9_.-]/.test(tool))
+    fail("BAD_ARGS", "server/tool solo [a-zA-Z0-9_.-]");
   const callArgs = input.args ?? {};
   if (typeof callArgs !== "object" || Array.isArray(callArgs)) fail("BAD_ARGS", "args must be an object");
   const timeoutMs = input.timeoutMs ?? 30_000;
-  if (!Number.isInteger(timeoutMs) || timeoutMs < 5000 || timeoutMs > 120_000) fail("BAD_ARGS", "timeoutMs must be 5000..120000");
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 5000 || timeoutMs > 120_000)
+    fail("BAD_ARGS", "timeoutMs must be 5000..120000");
   const configRel = (input.config ?? "mcp-servers.json").trim() || "mcp-servers.json";
 
   const { cfg } = await loadServer(ctx, configRel, server);
@@ -166,7 +186,8 @@ export async function mcpCallLogic(ctx: ToolContext, input: McpCallInput): Promi
     client.notify("notifications/initialized", {});
     const listed = (await client.request("tools/list", {})) as { tools?: { name: string }[] };
     const names = Array.isArray(listed?.tools) ? listed.tools.map((t) => t.name) : [];
-    if (!names.includes(tool)) fail("MCP_ERROR", `tool not found on server ${server}: ${tool} (ha: ${names.join(", ") || "nessuno"})`);
+    if (!names.includes(tool))
+      fail("MCP_ERROR", `tool not found on server ${server}: ${tool} (ha: ${names.join(", ") || "nessuno"})`);
     const result = await client.request("tools/call", { name: tool, arguments: callArgs });
     const text = JSON.stringify(result);
     const truncated = text.length > MAX_RESULT;

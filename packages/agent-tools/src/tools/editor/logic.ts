@@ -91,7 +91,8 @@ export async function editorLogic(ctx: ToolContext, input: EditorInput): Promise
     const oldString = input.oldString ?? "";
     const newString = input.newString ?? "";
     if (!oldString) throw Object.assign(new Error("oldString is required for replace"), { code: "BAD_ARGS" });
-    if (oldString === newString) throw Object.assign(new Error("oldString and newString are identical"), { code: "NOOP" });
+    if (oldString === newString)
+      throw Object.assign(new Error("oldString and newString are identical"), { code: "NOOP" });
     const occurrences = countOccurrences(before, oldString);
     if (occurrences === 0) throw Object.assign(new Error("oldString not found"), { code: "NOT_FOUND_STRING" });
     const replaceAll = input.replaceAll ?? false;
@@ -107,7 +108,8 @@ export async function editorLogic(ctx: ToolContext, input: EditorInput): Promise
     const content = input.content ?? "";
     if (!Number.isInteger(line) || line < 1) throw Object.assign(new Error("line must be >= 1"), { code: "BAD_ARGS" });
     const lines = before.split("\n");
-    if (line > lines.length + 1) throw Object.assign(new Error(`line ${line} out of range (1..${lines.length + 1})`), { code: "OUT_OF_RANGE" });
+    if (line > lines.length + 1)
+      throw Object.assign(new Error(`line ${line} out of range (1..${lines.length + 1})`), { code: "OUT_OF_RANGE" });
     lines.splice(line - 1, 0, content);
     after = lines.join("\n");
   } else if (mode === "deleteRange") {
@@ -117,7 +119,8 @@ export async function editorLogic(ctx: ToolContext, input: EditorInput): Promise
       throw Object.assign(new Error("startLine/endLine invalid"), { code: "BAD_ARGS" });
     }
     const lines = before.split("\n");
-    if (endLine > lines.length) throw Object.assign(new Error(`endLine ${endLine} out of range`), { code: "OUT_OF_RANGE" });
+    if (endLine > lines.length)
+      throw Object.assign(new Error(`endLine ${endLine} out of range`), { code: "OUT_OF_RANGE" });
     lines.splice(startLine - 1, endLine - startLine + 1);
     after = lines.join("\n");
   } else {

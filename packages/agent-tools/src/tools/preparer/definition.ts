@@ -26,9 +26,14 @@ export const preparerDefinition: ToolDefinition<PreparerInput, PreparerOutput> =
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: PREPARER_VERSION, since: "0.2.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<PreparerOutput>> {
-    return withTiming("prepare_context", PREPARER_VERSION, () => preparerLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "PREPARER_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "prepare_context",
+      PREPARER_VERSION,
+      () => preparerLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "PREPARER_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

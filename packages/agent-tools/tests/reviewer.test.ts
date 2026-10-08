@@ -53,7 +53,11 @@ describe("reviewer review_code", () => {
   it("useDiagnose:true aggiunge tsc-error veri", async () => {
     const ctx = createContext(tmp);
     await fs.writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
-    await fs.writeFile(path.join(tmp, "tsconfig.json"), JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }), "utf8");
+    await fs.writeFile(
+      path.join(tmp, "tsconfig.json"),
+      JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }),
+      "utf8",
+    );
     await fs.writeFile(path.join(tmp, "broken.ts"), "export const z: number = 'sbaglio';\n", "utf8");
     const out = await reviewerLogic(ctx, { paths: ["broken.ts"], useDiagnose: true });
     expect(out.diagnosed).toBe(true);

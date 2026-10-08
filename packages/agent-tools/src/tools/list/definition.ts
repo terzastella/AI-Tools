@@ -23,9 +23,14 @@ export const listDefinition: ToolDefinition<ListInput, ListOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: LIST_VERSION, since: "0.8.4" },
   async execute({ args, ctx }): Promise<AgentToolResult<ListOutput>> {
-    return withTiming("list_directory", LIST_VERSION, () => listLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "LIST_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "list_directory",
+      LIST_VERSION,
+      () => listLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "LIST_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

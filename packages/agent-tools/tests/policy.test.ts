@@ -1,9 +1,19 @@
 import { describe, it, expect } from "vitest";
-import { checkPolicy, matchTargetGlob, readonlyPolicy, standardPolicy, strictPolicy, extractTargets } from "../src/core/policy.js";
+import {
+  checkPolicy,
+  matchTargetGlob,
+  readonlyPolicy,
+  standardPolicy,
+  strictPolicy,
+  extractTargets,
+} from "../src/core/policy.js";
 
 describe("policy", () => {
   it("deny vince su allow", async () => {
-    const p = { allow: [{ domain: "filesystem", action: "write" as const }], deny: [{ domain: "filesystem", action: "write" as const }] };
+    const p = {
+      allow: [{ domain: "filesystem", action: "write" as const }],
+      deny: [{ domain: "filesystem", action: "write" as const }],
+    };
     expect(checkPolicy(p, { domain: "filesystem", action: "write" }).allow).toBe(false);
   });
 
@@ -14,7 +24,9 @@ describe("policy", () => {
   it("standard permette src/** e nega .env", async () => {
     expect(checkPolicy(standardPolicy, { domain: "filesystem", action: "write" }, "src/a.ts").allow).toBe(true);
     expect(checkPolicy(standardPolicy, { domain: "filesystem", action: "write" }, ".env").allow).toBe(false);
-    expect(checkPolicy(standardPolicy, { domain: "filesystem", action: "write" }, "node_modules/x.js").allow).toBe(false);
+    expect(checkPolicy(standardPolicy, { domain: "filesystem", action: "write" }, "node_modules/x.js").allow).toBe(
+      false,
+    );
   });
 
   it("standard nega write fuori scope", async () => {

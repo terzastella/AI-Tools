@@ -6,7 +6,8 @@ import { shellSessionPermissions } from "./permissions.js";
 export const shellSessionDefinition: ToolDefinition<ShellSessionInput, ShellSessionOutput> = {
   name: "shell_session",
   label: "Shell session",
-  description: "Processi lunghi in background: start (senza shell) + poll output + kill + list. Per dev-server e test lunghi. Serve sempre accept umano.",
+  description:
+    "Processi lunghi in background: start (senza shell) + poll output + kill + list. Per dev-server e test lunghi. Serve sempre accept umano.",
   category: "terminal",
   parameters: {
     type: "object",
@@ -25,9 +26,14 @@ export const shellSessionDefinition: ToolDefinition<ShellSessionInput, ShellSess
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: SHELL_SESSION_VERSION, since: "0.13.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<ShellSessionOutput>> {
-    return withTiming("shell_session", SHELL_SESSION_VERSION, () => shellSessionLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "SESSION_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "shell_session",
+      SHELL_SESSION_VERSION,
+      () => shellSessionLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "SESSION_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

@@ -58,7 +58,10 @@ export async function demo() {
   const ctx = createContext(process.cwd());
   const p = await preparerDefinition.execute({ args: { goal: "demo hello", paths: ["src"], maxFiles: 5 }, ctx });
   console.log("preparer:", p);
-  const w = await writerDefinition.execute({ args: { path: ".tmp-demo/hello.txt", content: "ciao\n", overwrite: true }, ctx });
+  const w = await writerDefinition.execute({
+    args: { path: ".tmp-demo/hello.txt", content: "ciao\n", overwrite: true },
+    ctx,
+  });
   console.log("writer:", w);
   const e = await editorDefinition.execute({
     args: { path: ".tmp-demo/hello.txt", oldString: "ciao", newString: "ciao mondo" },

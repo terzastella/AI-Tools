@@ -14,7 +14,11 @@ beforeEach(async () => {
   await fs.writeFile(path.join(tmp, "src/writer.ts"), "export function writerLogic() {}\n", "utf8");
   await fs.writeFile(path.join(tmp, "src/editor.ts"), "export function editorLogic() {}\n", "utf8");
   await fs.writeFile(path.join(tmp, "package.json"), JSON.stringify({ type: "module" }), "utf8");
-  await fs.writeFile(path.join(tmp, "tsconfig.json"), JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }), "utf8");
+  await fs.writeFile(
+    path.join(tmp, "tsconfig.json"),
+    JSON.stringify({ compilerOptions: { strict: true, noEmit: true }, include: ["./**/*"] }),
+    "utf8",
+  );
 });
 
 afterEach(async () => {
@@ -24,7 +28,10 @@ afterEach(async () => {
 describe("debugger debug_error v1.1 deterministico", () => {
   it("stack verificato: trova file che esiste con verified:true", async () => {
     const ctx = createContext(tmp);
-    const out = await debuggerLogic(ctx, { errorLog: "Error: boom\n at writerLogic (src/writer.ts:1:10)", paths: ["src"] });
+    const out = await debuggerLogic(ctx, {
+      errorLog: "Error: boom\n at writerLogic (src/writer.ts:1:10)",
+      paths: ["src"],
+    });
     expect(out.candidates.length).toBeGreaterThan(0);
     expect(out.candidates[0]!.path).toContain("writer");
     expect(out.candidates[0]!.verified).toBe(true);
@@ -34,14 +41,19 @@ describe("debugger debug_error v1.1 deterministico", () => {
   it("tsc reale senza stack: usa errori veri", async () => {
     const ctx = createContext(tmp);
     await fs.writeFile(path.join(tmp, "src/broken.ts"), "export const z: number = 'oops';\n", "utf8");
-    const out = await debuggerLogic(ctx, { errorLog: "Type 'string' is not assignable to type 'number'", paths: ["src"] });
+    const out = await debuggerLogic(ctx, {
+      errorLog: "Type 'string' is not assignable to type 'number'",
+      paths: ["src"],
+    });
     expect(out.candidates.length).toBeGreaterThan(0);
     expect(out.candidates[0]!.verified).toBe(true);
   });
 
   it("niente stack e tsc pulito: NO_CANDIDATE chiaro, non indovina", async () => {
     const ctx = createContext(tmp);
-    await expect(debuggerLogic(ctx, { errorLog: "qualcosa di vago senza file", paths: ["src"] })).rejects.toThrow(/NO_CANDIDATE/);
+    await expect(debuggerLogic(ctx, { errorLog: "qualcosa di vago senza file", paths: ["src"] })).rejects.toThrow(
+      /NO_CANDIDATE/,
+    );
   });
 
   it("hint per AMBIGUOUS noto (deterministico)", async () => {

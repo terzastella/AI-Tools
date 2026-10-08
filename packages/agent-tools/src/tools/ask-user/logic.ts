@@ -33,7 +33,10 @@ export async function askUserLogic(_ctx: ToolContext, input: AskUserInput): Prom
   const multi = input.multi ?? false;
   return {
     question,
-    options: options.map((o) => ({ label: o.label.trim().slice(0, 80), ...(o.description ? { description: o.description.slice(0, 200) } : {}) })),
+    options: options.map((o) => ({
+      label: o.label.trim().slice(0, 80),
+      ...(o.description ? { description: o.description.slice(0, 200) } : {}),
+    })),
     multi,
     hint: "Mostra queste opzioni all'umano e reinietta la risposta scelta.",
   };

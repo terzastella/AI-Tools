@@ -22,9 +22,20 @@ export interface GitOutput {
 
 export const GIT_VERSION = "1.0.0";
 
-async function runGit(args: string[], cwd: string, timeout: number, env: NodeJS.ProcessEnv): Promise<{ out: string; code: number }> {
+async function runGit(
+  args: string[],
+  cwd: string,
+  timeout: number,
+  env: NodeJS.ProcessEnv,
+): Promise<{ out: string; code: number }> {
   try {
-    const { stdout, stderr } = await execFileAsync("git", args, { cwd, timeout, windowsHide: true, maxBuffer: 2_000_000, env });
+    const { stdout, stderr } = await execFileAsync("git", args, {
+      cwd,
+      timeout,
+      windowsHide: true,
+      maxBuffer: 2_000_000,
+      env,
+    });
     return { out: String(stdout || stderr), code: 0 };
   } catch (e: unknown) {
     const err = e as { stdout?: unknown; stderr?: unknown; message?: string };
@@ -58,7 +69,8 @@ export async function gitLogic(ctx: ToolContext, input: GitInput): Promise<GitOu
               ? ["diff", "--cached", "--stat"]
               : (() => {
                   const line = input.line ?? 0;
-                  if (!Number.isInteger(line) || line < 1) throw Object.assign(new Error("line must be >= 1 for blame"), { code: "BAD_ARGS" });
+                  if (!Number.isInteger(line) || line < 1)
+                    throw Object.assign(new Error("line must be >= 1 for blame"), { code: "BAD_ARGS" });
                   return ["blame", "-L", `${line},${line}`, "--", rel];
                 })();
   const { out, code } = await runGit(args, r.abs, 15000, scrubEnv(ctx));

@@ -6,7 +6,8 @@ import { auditVerifyPermissions } from "./permissions.js";
 export const auditVerifyDefinition: ToolDefinition<AuditVerifyInput, AuditVerifyOutput> = {
   name: "audit_verify",
   label: "Audit verify",
-  description: "Verifica la catena hash dell'audit giornaliero: dice se è integro o quale riga è manomessa. Solo lettura.",
+  description:
+    "Verifica la catena hash dell'audit giornaliero: dice se è integro o quale riga è manomessa. Solo lettura.",
   category: "other",
   parameters: {
     type: "object",
@@ -18,9 +19,14 @@ export const auditVerifyDefinition: ToolDefinition<AuditVerifyInput, AuditVerify
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: AUDIT_VERIFY_VERSION, since: "0.18.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<AuditVerifyOutput>> {
-    return withTiming("audit_verify", AUDIT_VERIFY_VERSION, () => auditVerifyLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "VERIFY_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "audit_verify",
+      AUDIT_VERIFY_VERSION,
+      () => auditVerifyLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "VERIFY_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

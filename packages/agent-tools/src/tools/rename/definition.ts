@@ -10,7 +10,13 @@ export const renameDefinition: ToolDefinition<RenameInput, RenameOutput> = {
   category: "filesystem",
   parameters: {
     type: "object",
-    properties: { oldName: { type: "string" }, newName: { type: "string" }, paths: { type: "array" }, includeGlobs: { type: "array" }, dryRun: { type: "boolean" } },
+    properties: {
+      oldName: { type: "string" },
+      newName: { type: "string" },
+      paths: { type: "array" },
+      includeGlobs: { type: "array" },
+      dryRun: { type: "boolean" },
+    },
     required: ["oldName", "newName"],
     additionalProperties: false,
   },
@@ -18,9 +24,14 @@ export const renameDefinition: ToolDefinition<RenameInput, RenameOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: RENAME_VERSION, since: "0.8.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<RenameOutput>> {
-    return withTiming("rename_symbol", RENAME_VERSION, () => renameLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "RENAME_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "rename_symbol",
+      RENAME_VERSION,
+      () => renameLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "RENAME_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

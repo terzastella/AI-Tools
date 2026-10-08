@@ -39,5 +39,9 @@ export async function typecheckFileLogic(ctx: ToolContext, input: TypecheckFileI
     if (wanted.has(ip)) return true;
     return [...wanted].some((w) => ip.endsWith(`/${w}`) || ip === w);
   });
-  return { issues: filtered.slice(0, 100), summary: { total: diag.issues.filter((i) => i.source === "tsc").length, filtered: filtered.length }, files: normalized };
+  return {
+    issues: filtered.slice(0, 100),
+    summary: { total: diag.issues.filter((i) => i.source === "tsc").length, filtered: filtered.length },
+    files: normalized,
+  };
 }

@@ -111,7 +111,15 @@ function regexHits(content: string, lang: string, symbol: string, kind: string):
       if (!m) continue;
       const name = (m[1] ?? m[2] ?? "").trim().slice(0, 120);
       if (wants(p.kind, name)) {
-        out.push({ line: i + 1, kind: p.kind, name, snippet: lines.slice(i, i + 3).join("\n").slice(0, 300) });
+        out.push({
+          line: i + 1,
+          kind: p.kind,
+          name,
+          snippet: lines
+            .slice(i, i + 3)
+            .join("\n")
+            .slice(0, 300),
+        });
       }
       break;
     }
@@ -119,15 +127,43 @@ function regexHits(content: string, lang: string, symbol: string, kind: string):
   return out;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/** Tipi minimi per il modulo typescript caricato dinamicamente (zero dipendenze runtime). */
+interface TsIdentifier {
+  kind: number;
+  text: string;
+}
+interface TsNode {
+  kind: number;
+  pos: number;
+  name?: TsIdentifier;
+  getStart: (sf?: TsNode) => number;
+  moduleSpecifier?: { text: string };
+  declarationList?: { declarations: TsDecl[] };
+}
+interface TsDecl {
+  name?: TsIdentifier;
+  initializer?: { kind: number };
+  getStart?: (sf?: TsNode) => number;
+  pos: number;
+}
+interface TsPos {
+  getStart?: (sf?: TsNode) => number;
+  pos: number;
+}
+interface TsModule {
+  createSourceFile: (file: string, content: string, target: number, setParentNodes: boolean) => TsNode;
+  ScriptTarget: { Latest: number };
+  SyntaxKind: Record<string, number>;
+  forEachChild: (node: TsNode, visit: (node: TsNode) => void) => void;
+}
+
 async function tsAstHits(content: string, file: string, symbol: string, kind: string): Promise<RawHit[] | null> {
-  let ts: any;
+  let ts: TsModule;
   try {
-    ts = await import("typescript");
+    ts = (await import("typescript")) as unknown as TsModule;
   } catch {
     return null;
   }
-  const lines = content.split("\n");
   const out: RawHit[] = [];
   const sym = symbol.toLowerCase();
   const wants = (k: string, name: string): boolean => {
@@ -135,28 +171,35 @@ async function tsAstHits(content: string, file: string, symbol: string, kind: st
     if (sym && !name.toLowerCase().includes(sym)) return false;
     return true;
   };
-  let sf: any;
+  let sf: TsNode;
   try {
     sf = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true);
   } catch {
     return null;
   }
   const at = (pos: number): number => content.slice(0, pos).split("\n").length;
-  const snippetAt = (node: any): string => {
+  const snippetAt = (node: TsPos): string => {
     const start = node.getStart ? node.getStart(sf) : node.pos;
-    return content.slice(start, start + 200).split("\n").slice(0, 3).join("\n");
+    return content
+      .slice(start, start + 200)
+      .split("\n")
+      .slice(0, 3)
+      .join("\n");
   };
-  const visit = (node: any): void => {
+  const visit = (node: TsNode): void => {
     const SyntaxKind = ts.SyntaxKind;
     if (node.kind === SyntaxKind.FunctionDeclaration && node.name) {
       const name = node.name.text;
-      if (wants("function", name)) out.push({ line: at(node.getStart(sf)), kind: "function", name, snippet: snippetAt(node) });
+      if (wants("function", name))
+        out.push({ line: at(node.getStart(sf)), kind: "function", name, snippet: snippetAt(node) });
     } else if (node.kind === SyntaxKind.ClassDeclaration && node.name) {
       const name = node.name.text;
-      if (wants("class", name)) out.push({ line: at(node.getStart(sf)), kind: "class", name, snippet: snippetAt(node) });
+      if (wants("class", name))
+        out.push({ line: at(node.getStart(sf)), kind: "class", name, snippet: snippetAt(node) });
     } else if (node.kind === SyntaxKind.InterfaceDeclaration && node.name) {
       const name = node.name.text;
-      if (wants("interface", name)) out.push({ line: at(node.getStart(sf)), kind: "interface", name, snippet: snippetAt(node) });
+      if (wants("interface", name))
+        out.push({ line: at(node.getStart(sf)), kind: "interface", name, snippet: snippetAt(node) });
     } else if (node.kind === SyntaxKind.VariableStatement) {
       const decls = node.declarationList?.declarations ?? [];
       for (const d of decls) {
@@ -165,11 +208,13 @@ async function tsAstHits(content: string, file: string, symbol: string, kind: st
         const isFn = init.kind === SyntaxKind.ArrowFunction || init.kind === SyntaxKind.FunctionExpression;
         if (!isFn || !d.name || d.name.kind !== SyntaxKind.Identifier) continue;
         const name = d.name.text;
-        if (wants("function", name)) out.push({ line: at(d.getStart(sf)), kind: "function", name, snippet: snippetAt(d) });
+        if (wants("function", name))
+          out.push({ line: at(d.getStart ? d.getStart(sf) : d.pos), kind: "function", name, snippet: snippetAt(d) });
       }
     } else if (node.kind === SyntaxKind.ImportDeclaration) {
       const mod = node.moduleSpecifier?.text ?? "";
-      if (wants("import", mod)) out.push({ line: at(node.getStart(sf)), kind: "import", name: mod.slice(0, 120), snippet: snippetAt(node) });
+      if (wants("import", mod))
+        out.push({ line: at(node.getStart(sf)), kind: "import", name: mod.slice(0, 120), snippet: snippetAt(node) });
     }
     ts.forEachChild(node, visit);
   };
@@ -188,7 +233,8 @@ export async function astSearchLogic(ctx: ToolContext, input: AstSearchInput): P
     throw Object.assign(new Error("kind must be function|class|interface|import|all"), { code: "BAD_ARGS" });
   }
   const lang = input.lang ?? "auto";
-  if (!["ts", "js", "py", "auto"].includes(lang)) throw Object.assign(new Error("lang must be ts|js|py|auto"), { code: "BAD_ARGS" });
+  if (!["ts", "js", "py", "auto"].includes(lang))
+    throw Object.assign(new Error("lang must be ts|js|py|auto"), { code: "BAD_ARGS" });
   const rels = input.paths && input.paths.length > 0 ? input.paths : ["."];
   if (rels.length > 20) throw Object.assign(new Error("paths max 20"), { code: "BAD_ARGS" });
   const maxResults = input.maxResults ?? 50;
@@ -196,8 +242,16 @@ export async function astSearchLogic(ctx: ToolContext, input: AstSearchInput): P
     throw Object.assign(new Error("maxResults must be 1..200"), { code: "BAD_ARGS" });
   }
 
-  const exts = new Set<string>([...(EXT_BY_LANG["ts"] ?? []), ...(EXT_BY_LANG["js"] ?? []), ...(EXT_BY_LANG["py"] ?? [])]);
-  const files = await collectFiles(ctx, rels.map((p) => String(p)), exts);
+  const exts = new Set<string>([
+    ...(EXT_BY_LANG["ts"] ?? []),
+    ...(EXT_BY_LANG["js"] ?? []),
+    ...(EXT_BY_LANG["py"] ?? []),
+  ]);
+  const files = await collectFiles(
+    ctx,
+    rels.map((p) => String(p)),
+    exts,
+  );
   const matches: AstMatch[] = [];
   let engine: "ts-ast" | "regex" = "regex";
   let usedAst = false;

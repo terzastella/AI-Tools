@@ -21,9 +21,14 @@ export const importMapDefinition: ToolDefinition<ImportMapInput, ImportMapOutput
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: IMPORT_MAP_VERSION, since: "0.10.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<ImportMapOutput>> {
-    return withTiming("import_map", IMPORT_MAP_VERSION, () => importMapLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "IMPORTMAP_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "import_map",
+      IMPORT_MAP_VERSION,
+      () => importMapLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "IMPORTMAP_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

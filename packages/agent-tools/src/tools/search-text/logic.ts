@@ -97,7 +97,7 @@ export async function searchTextLogic(ctx: ToolContext, input: SearchTextInput):
   }
   const includeRe = input.include ? globToRegExp(input.include) : undefined;
 
-  let candidates: string[] = [];
+  const candidates: string[] = [];
   for (const p of rawPaths) {
     const r = resolveSafePath(ctx, p);
     if (!r.ok) continue;
@@ -135,7 +135,10 @@ export async function searchTextLogic(ctx: ToolContext, input: SearchTextInput):
       if (m) {
         const start = Math.max(0, i - contextLines);
         const end = Math.min(lines.length - 1, i + contextLines);
-        const snippet = lines.slice(start, end + 1).join(" ").slice(0, 200);
+        const snippet = lines
+          .slice(start, end + 1)
+          .join(" ")
+          .slice(0, 200);
         matches.push({ path: rel, abs, line: i + 1, col: (m.index ?? 0) + 1, snippet });
         files.add(rel);
       }

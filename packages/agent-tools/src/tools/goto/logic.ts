@@ -62,14 +62,17 @@ export async function gotoLogic(ctx: ToolContext, input: GotoInput): Promise<Got
     const r = resolveSafePath(ctx, p);
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${p}`), { code: "PATH_TRAVERSAL" });
   }
-  let fromImports: string[] = [];
+  const fromImports: string[] = [];
   if (input.fromFile) {
     const r = resolveSafePath(ctx, input.fromFile);
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${input.fromFile}`), { code: "PATH_TRAVERSAL" });
     try {
       const content = await fs.readFile(r.abs, "utf8");
       // import { symbol } from "./x" o import symbol from
-      const importRe = new RegExp(`import\\s+(?:[^'"]*\\b${esc(symbol)}\\b[^'"]*from\\s*['"]([^'"]+)['"]|['"]([^'"]+)['"])`, "g");
+      const importRe = new RegExp(
+        `import\\s+(?:[^'"]*\\b${esc(symbol)}\\b[^'"]*from\\s*['"]([^'"]+)['"]|['"]([^'"]+)['"])`,
+        "g",
+      );
       let m: RegExpExecArray | null;
       while ((m = importRe.exec(content)) !== null) {
         const spec = m[1] ?? m[2] ?? "";
@@ -83,7 +86,7 @@ export async function gotoLogic(ctx: ToolContext, input: GotoInput): Promise<Got
     }
   }
 
-  let candidates: string[] = [];
+  const candidates: string[] = [];
   for (const p of rawPaths) {
     const r = resolveSafePath(ctx, p);
     if (!r.ok) continue;
@@ -119,8 +122,12 @@ export async function gotoLogic(ctx: ToolContext, input: GotoInput): Promise<Got
 
   // Ordina: import diretto prima, poi export, poi resto
   locations.sort((a, b) => {
-    const aImp = fromImports.some((imp) => a.path.replace(/\.(ts|js)x?$/, "").endsWith(imp.replace(/\.(ts|js)x?$/, ""))) ? 0 : 1;
-    const bImp = fromImports.some((imp) => b.path.replace(/\.(ts|js)x?$/, "").endsWith(imp.replace(/\.(ts|js)x?$/, ""))) ? 0 : 1;
+    const aImp = fromImports.some((imp) => a.path.replace(/\.(ts|js)x?$/, "").endsWith(imp.replace(/\.(ts|js)x?$/, "")))
+      ? 0
+      : 1;
+    const bImp = fromImports.some((imp) => b.path.replace(/\.(ts|js)x?$/, "").endsWith(imp.replace(/\.(ts|js)x?$/, "")))
+      ? 0
+      : 1;
     if (aImp !== bImp) return aImp - bImp;
     const aExp = a.kind.startsWith("export") ? 0 : 1;
     const bExp = b.kind.startsWith("export") ? 0 : 1;

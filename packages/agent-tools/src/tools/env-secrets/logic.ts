@@ -35,7 +35,8 @@ export async function envSecretsLogic(_ctx: ToolContext, input: EnvSecretsInput)
       throw Object.assign(new Error("keys must be an array 1..50"), { code: "BAD_ARGS" });
     }
     const checked = keys.map((k) => {
-      if (typeof k !== "string" || !KEY_RE.test(k)) throw Object.assign(new Error(`bad key name: ${k}`), { code: "BAD_ARGS" });
+      if (typeof k !== "string" || !KEY_RE.test(k))
+        throw Object.assign(new Error(`bad key name: ${k}`), { code: "BAD_ARGS" });
       const v = process.env[k];
       // mai ritornare il valore: solo set + lunghezza
       return { key: k, set: typeof v === "string" && v.length > 0, length: typeof v === "string" ? v.length : 0 };
@@ -50,7 +51,8 @@ export async function envSecretsLogic(_ctx: ToolContext, input: EnvSecretsInput)
     const keys = input.keys ?? [];
     if (!Array.isArray(keys) || keys.length > 50) throw Object.assign(new Error("keys max 50"), { code: "BAD_ARGS" });
     for (const k of keys) {
-      if (typeof k !== "string" || !KEY_RE.test(k)) throw Object.assign(new Error(`bad key name: ${k}`), { code: "BAD_ARGS" });
+      if (typeof k !== "string" || !KEY_RE.test(k))
+        throw Object.assign(new Error(`bad key name: ${k}`), { code: "BAD_ARGS" });
     }
     return { op, redacted: redactSecrets(text, keys) };
   }

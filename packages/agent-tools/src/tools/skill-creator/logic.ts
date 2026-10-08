@@ -1,4 +1,3 @@
-import { promises as fs } from "node:fs";
 import path from "node:path";
 import { resolveSafePath, type ToolContext } from "../../core/context.js";
 import { writerLogic } from "../writer/logic.js";
@@ -31,7 +30,10 @@ const SNAKE_RE = /^[a-z][a-z0-9_]*$/;
 const EXISTING = new Set(["create_file", "edit_file", "prepare_context", "review_code", "debug_error", "create_skill"]);
 
 function pascal(s: string): string {
-  return s.split("_").map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join("");
+  return s
+    .split("_")
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join("");
 }
 
 export async function skillCreatorLogic(ctx: ToolContext, input: SkillCreatorInput): Promise<SkillCreatorOutput> {
@@ -49,7 +51,9 @@ export async function skillCreatorLogic(ctx: ToolContext, input: SkillCreatorInp
   // folder kebab semplice: create_skill -> create-skill? mantieni snake per coerenza repo: usa name senza underscore? No: usa name così com'è.
   const baseDir = `${dir}/${name}`;
   const pascalName = pascal(name);
-  const constName = `${name.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())}Definition`.replace(/^./, (c) => c.toLowerCase());
+  const constName = `${name.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())}Definition`.replace(/^./, (c) =>
+    c.toLowerCase(),
+  );
   const version = "1.0.0";
 
   const logicTs = `import type { ToolContext } from "../../core/context.js";
@@ -159,5 +163,11 @@ describe("${name}", () => {
   // usa path per coerenza import
   void path;
   ctx.logger.info("create_skill", { name, written });
-  return { name, files: write ? files : [...files, { path: `tests/${name}.test.ts`, content: testTs }], definitionSnippet, nextSteps, written };
+  return {
+    name,
+    files: write ? files : [...files, { path: `tests/${name}.test.ts`, content: testTs }],
+    definitionSnippet,
+    nextSteps,
+    written,
+  };
 }

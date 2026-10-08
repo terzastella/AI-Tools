@@ -48,10 +48,26 @@ export function wrapDefinition<TArgs extends Record<string, unknown>, TOut>(
         if (perm.action === "read") {
           const c = checkPolicy(policy, perm);
           if (!c.allow) {
-            const res = fail(def.name, def.metadata?.version ?? "1.0.0", "POLICY_DENIED", c.reason, Math.round(performance.now() - start), {
-              permission: `${perm.domain}:${perm.action}`,
+            const res = fail(
+              def.name,
+              def.metadata?.version ?? "1.0.0",
+              "POLICY_DENIED",
+              c.reason,
+              Math.round(performance.now() - start),
+              {
+                permission: `${perm.domain}:${perm.action}`,
+              },
+            );
+            await audit.write({
+              time: new Date().toISOString(),
+              tool: def.name,
+              ok: false,
+              durationMs: res.meta.durationMs,
+              decision: "deny",
+              reason: c.reason,
+              cwd: ctx.cwd,
+              sessionId: ctx.sessionId,
             });
-            await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: c.reason, cwd: ctx.cwd, sessionId: ctx.sessionId });
             return res;
           }
           continue;
@@ -61,23 +77,73 @@ export function wrapDefinition<TArgs extends Record<string, unknown>, TOut>(
           // read-only tool senza path? Per write senza target -> deny fail-closed
           const c = checkPolicy(policy, perm);
           if (!c.allow) {
-            const res = fail(def.name, def.metadata?.version ?? "1.0.0", "POLICY_DENIED", c.reason, Math.round(performance.now() - start));
-            await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: c.reason, cwd: ctx.cwd, sessionId: ctx.sessionId });
+            const res = fail(
+              def.name,
+              def.metadata?.version ?? "1.0.0",
+              "POLICY_DENIED",
+              c.reason,
+              Math.round(performance.now() - start),
+            );
+            await audit.write({
+              time: new Date().toISOString(),
+              tool: def.name,
+              ok: false,
+              durationMs: res.meta.durationMs,
+              decision: "deny",
+              reason: c.reason,
+              cwd: ctx.cwd,
+              sessionId: ctx.sessionId,
+            });
             return res;
           }
           // Blocco comandi pericolosi anche senza target (riga intera, non solo binario)
           const full = fullCommand(args as Record<string, unknown>);
           if (full && isDangerousCommand(full)) {
-            const res = fail(def.name, def.metadata?.version ?? "1.0.0", "POLICY_DENIED", `dangerous command blocked: ${full.slice(0, 120)}`, Math.round(performance.now() - start));
-            await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: "dangerous command", cwd: ctx.cwd, sessionId: ctx.sessionId });
+            const res = fail(
+              def.name,
+              def.metadata?.version ?? "1.0.0",
+              "POLICY_DENIED",
+              `dangerous command blocked: ${full.slice(0, 120)}`,
+              Math.round(performance.now() - start),
+            );
+            await audit.write({
+              time: new Date().toISOString(),
+              tool: def.name,
+              ok: false,
+              durationMs: res.meta.durationMs,
+              decision: "deny",
+              reason: "dangerous command",
+              cwd: ctx.cwd,
+              sessionId: ctx.sessionId,
+            });
             return res;
           }
           // Approval gate: se c'è un approver umano, chiedi sempre per write/execute
           if (needsApproval(perm.action) && ctx.approver) {
-            const decision = await ctx.approver({ tool: def.name, action: perm.action, targets, reason: "policy allow, need human accept" });
+            const decision = await ctx.approver({
+              tool: def.name,
+              action: perm.action,
+              targets,
+              reason: "policy allow, need human accept",
+            });
             if (decision !== "accept") {
-              const res = fail(def.name, def.metadata?.version ?? "1.0.0", "NEED_APPROVAL", `denied by human (${decision})`, Math.round(performance.now() - start));
-              await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "need_approval", reason: "human denied", cwd: ctx.cwd, sessionId: ctx.sessionId });
+              const res = fail(
+                def.name,
+                def.metadata?.version ?? "1.0.0",
+                "NEED_APPROVAL",
+                `denied by human (${decision})`,
+                Math.round(performance.now() - start),
+              );
+              await audit.write({
+                time: new Date().toISOString(),
+                tool: def.name,
+                ok: false,
+                durationMs: res.meta.durationMs,
+                decision: "need_approval",
+                reason: "human denied",
+                cwd: ctx.cwd,
+                sessionId: ctx.sessionId,
+              });
               return res;
             }
           }
@@ -86,29 +152,81 @@ export function wrapDefinition<TArgs extends Record<string, unknown>, TOut>(
         for (const t of targets) {
           const c = checkPolicy(policy, perm, t);
           if (!c.allow) {
-            const res = fail(def.name, def.metadata?.version ?? "1.0.0", "POLICY_DENIED", `${c.reason} (target ${t})`, Math.round(performance.now() - start), {
-              permission: `${perm.domain}:${perm.action}`,
-              target: t,
+            const res = fail(
+              def.name,
+              def.metadata?.version ?? "1.0.0",
+              "POLICY_DENIED",
+              `${c.reason} (target ${t})`,
+              Math.round(performance.now() - start),
+              {
+                permission: `${perm.domain}:${perm.action}`,
+                target: t,
+              },
+            );
+            await audit.write({
+              time: new Date().toISOString(),
+              tool: def.name,
+              ok: false,
+              durationMs: res.meta.durationMs,
+              decision: "deny",
+              reason: c.reason,
+              cwd: ctx.cwd,
+              sessionId: ctx.sessionId,
             });
-            await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: c.reason, cwd: ctx.cwd, sessionId: ctx.sessionId });
             return res;
           }
         }
         // Blocco comandi pericolosi con target (doppio controllo, riga intera)
         const fullWithTargets = fullCommand(args as Record<string, unknown>);
         if (fullWithTargets && isDangerousCommand(fullWithTargets)) {
-          const res = fail(def.name, def.metadata?.version ?? "1.0.0", "POLICY_DENIED", "dangerous command blocked", Math.round(performance.now() - start));
-          await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: "dangerous command", cwd: ctx.cwd, sessionId: ctx.sessionId });
+          const res = fail(
+            def.name,
+            def.metadata?.version ?? "1.0.0",
+            "POLICY_DENIED",
+            "dangerous command blocked",
+            Math.round(performance.now() - start),
+          );
+          await audit.write({
+            time: new Date().toISOString(),
+            tool: def.name,
+            ok: false,
+            durationMs: res.meta.durationMs,
+            decision: "deny",
+            reason: "dangerous command",
+            cwd: ctx.cwd,
+            sessionId: ctx.sessionId,
+          });
           return res;
         }
         // Approval gate con target: policy ok, ora serve accept umano
         if (needsApproval(perm.action) && ctx.approver) {
-          const decision = await ctx.approver({ tool: def.name, action: perm.action, targets, reason: "policy allow, need human accept" });
+          const decision = await ctx.approver({
+            tool: def.name,
+            action: perm.action,
+            targets,
+            reason: "policy allow, need human accept",
+          });
           if (decision !== "accept") {
-            const res = fail(def.name, def.metadata?.version ?? "1.0.0", "NEED_APPROVAL", `denied by human (${decision}) for ${targets.join(", ")}`, Math.round(performance.now() - start), {
-              permission: `${perm.domain}:${perm.action}`,
+            const res = fail(
+              def.name,
+              def.metadata?.version ?? "1.0.0",
+              "NEED_APPROVAL",
+              `denied by human (${decision}) for ${targets.join(", ")}`,
+              Math.round(performance.now() - start),
+              {
+                permission: `${perm.domain}:${perm.action}`,
+              },
+            );
+            await audit.write({
+              time: new Date().toISOString(),
+              tool: def.name,
+              ok: false,
+              durationMs: res.meta.durationMs,
+              decision: "need_approval",
+              reason: "human denied",
+              cwd: ctx.cwd,
+              sessionId: ctx.sessionId,
             });
-            await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "need_approval", reason: "human denied", cwd: ctx.cwd, sessionId: ctx.sessionId });
             return res;
           }
         }
@@ -129,14 +247,26 @@ export function wrapDefinition<TArgs extends Record<string, unknown>, TOut>(
             `budget ${used + need} > ${ctx.budgetLimit} stimati`,
             Math.round(performance.now() - start),
           );
-          await audit.write({ time: new Date().toISOString(), tool: def.name, ok: false, durationMs: res.meta.durationMs, decision: "deny", reason: "budget exceeded", cwd: ctx.cwd, sessionId: ctx.sessionId });
+          await audit.write({
+            time: new Date().toISOString(),
+            tool: def.name,
+            ok: false,
+            durationMs: res.meta.durationMs,
+            decision: "deny",
+            reason: "budget exceeded",
+            cwd: ctx.cwd,
+            sessionId: ctx.sessionId,
+          });
           return res;
         }
       }
 
       const res = await def.execute(innerArgs);
       // Traccia consumo args+result (best-effort, mai blocca)
-      await recordUsage(ctx.cwd, estimateArgsTokens(effectiveArgs) + estimateTokens(JSON.stringify(res.data ?? res.error ?? "")));
+      await recordUsage(
+        ctx.cwd,
+        estimateArgsTokens(effectiveArgs) + estimateTokens(JSON.stringify(res.data ?? res.error ?? "")),
+      );
       await audit.write({
         time: new Date().toISOString(),
         tool: def.name,

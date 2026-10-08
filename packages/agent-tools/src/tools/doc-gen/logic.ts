@@ -40,7 +40,11 @@ export async function docGenLogic(ctx: ToolContext, input: GenerateDocsInput): P
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${p}`), { code: "PATH_TRAVERSAL" });
   }
 
-  const prep = await preparerLogic(ctx, { goal: "export function const class interface type", paths: rawPaths, maxFiles });
+  const prep = await preparerLogic(ctx, {
+    goal: "export function const class interface type",
+    paths: rawPaths,
+    maxFiles,
+  });
   const docs: DocEntry[] = [];
 
   for (const f of prep.files) {

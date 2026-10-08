@@ -88,8 +88,6 @@ cd packages/agent-tools && pnpm build
 
 > Guaranteed core-15 for new agents — see [`docs/LEVELS.md`](docs/LEVELS.md).
 
-> Guaranteed core-15 for new agents — see [`docs/LEVELS.md`](docs/LEVELS.md).
-
 > Click a family to expand. One page per tool in [`packages/agent-tools/docs/tools/`](packages/agent-tools/docs/tools/).
 
 <details>

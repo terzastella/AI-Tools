@@ -56,7 +56,9 @@ export async function delegateLogic(ctx: ToolContext, input: DelegateInput): Pro
       // verifica che il file esista e sia leggibile
       const read = await readLogic(ctx, { path: s.path, limit: 5 });
       // review veloce senza dottore per non rallentare (stile)
-      const rev = await reviewerLogic(ctx, { paths: [s.path], maxFiles: 1, useDiagnose: false }).catch(() => ({ issues: [] }));
+      const rev = await reviewerLogic(ctx, { paths: [s.path], maxFiles: 1, useDiagnose: false }).catch(() => ({
+        issues: [],
+      }));
       const issues = (rev as { issues: unknown[] }).issues.length;
       verified = read.totalLines > 0;
       detail = `${s.path}: ${read.totalLines} righe, ${issues} puzze stile. ${s.hint.slice(0, 120)}`;

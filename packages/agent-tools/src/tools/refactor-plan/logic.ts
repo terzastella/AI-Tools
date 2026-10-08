@@ -39,7 +39,11 @@ export async function refactorPlanLogic(ctx: ToolContext, input: RefactorPlanInp
 
   // Occhi buoni + revisore acceso + dottore diretto (equilibrato, non eccessivo)
   const [search, rev] = await Promise.all([
-    searchProLogic(ctx, { query: goal, paths: rawPaths, maxFiles: maxSteps * 2 }).catch(() => ({ query: goal, hits: [], truncated: false })),
+    searchProLogic(ctx, { query: goal, paths: rawPaths, maxFiles: maxSteps * 2 }).catch(() => ({
+      query: goal,
+      hits: [],
+      truncated: false,
+    })),
     reviewerLogic(ctx, { paths: rawPaths, maxFiles: maxSteps * 2, useDiagnose: true }).catch(() => ({
       issues: [],
       summary: { files: 0, errors: 0, warnings: 0, infos: 0 },
@@ -48,7 +52,7 @@ export async function refactorPlanLogic(ctx: ToolContext, input: RefactorPlanInp
     })),
   ]);
 
-  let tscCount = new Map<string, { count: number; first?: string; line?: number }>();
+  const tscCount = new Map<string, { count: number; first?: string; line?: number }>();
   try {
     const diag = await diagnoseLogic(ctx, { paths: rawPaths });
     for (const d of diag.issues) {
@@ -112,11 +116,13 @@ export async function refactorPlanLogic(ctx: ToolContext, input: RefactorPlanInp
   const top = steps.slice(0, maxSteps);
 
   const risks: string[] = [];
-  if ([...smell.values()].some((s) => s.secrets)) risks.push("Attenzione: tocchi possibili secrets — spostali in env, non committarli.");
+  if ([...smell.values()].some((s) => s.secrets))
+    risks.push("Attenzione: tocchi possibili secrets — spostali in env, non committarli.");
   if (top.some((s) => s.path.endsWith(".test.ts"))) risks.push("Tocca test: lancia vitest dopo ogni modifica.");
   if (search.truncated) risks.push("Troppi file: restringi paths o alza maxSteps.");
   if (top.length === 0) risks.push("Nessun candidato — allarga goal o paths.");
-  if (rev.summary.errors > 0 && top.length > 0) risks.push(`${rev.summary.errors} errori da review — sistema prima errori/secrets.`);
+  if (rev.summary.errors > 0 && top.length > 0)
+    risks.push(`${rev.summary.errors} errori da review — sistema prima errori/secrets.`);
 
   ctx.logger.info("refactor_plan", { goal: goal.slice(0, 80), steps: top.length });
   return { goal, steps: top, risks };

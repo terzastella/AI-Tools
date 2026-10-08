@@ -28,7 +28,8 @@ export async function lintFixLogic(ctx: ToolContext, input: LintFixInput): Promi
     if (typeof p !== "string" || !p.trim()) throw Object.assign(new Error("bad path entry"), { code: "BAD_ARGS" });
     const r = resolveSafePath(ctx, p.trim());
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${p}`), { code: "PATH_TRAVERSAL" });
-    if (!/\.(ts|js|tsx|jsx|mts|cts)$/.test(r.abs)) throw Object.assign(new Error(`only JS/TS files: ${p}`), { code: "BAD_ARGS" });
+    if (!/\.(ts|js|tsx|jsx|mts|cts)$/.test(r.abs))
+      throw Object.assign(new Error(`only JS/TS files: ${p}`), { code: "BAD_ARGS" });
     return p.trim().replace(/\\/g, "/");
   });
   const timeoutMs = input.timeoutMs ?? 60_000;
@@ -53,6 +54,11 @@ export async function lintFixLogic(ctx: ToolContext, input: LintFixInput): Promi
     if (/could not determine executable|not found|Cannot find/i.test(msg)) {
       throw Object.assign(new Error("eslint not installed in this project"), { code: "ESLINT_MISSING" });
     }
-    return { paths: rels, stdout: String(err.stdout ?? "").slice(0, 10_000), stderr: msg.slice(0, 5_000), code: Number(err.code ?? 1) };
+    return {
+      paths: rels,
+      stdout: String(err.stdout ?? "").slice(0, 10_000),
+      stderr: msg.slice(0, 5_000),
+      code: Number(err.code ?? 1),
+    };
   }
 }

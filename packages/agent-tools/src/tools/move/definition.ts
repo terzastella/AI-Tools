@@ -24,9 +24,14 @@ export const moveDefinition: ToolDefinition<MoveInput, MoveOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: MOVE_VERSION, since: "0.8.7" },
   async execute({ args, ctx }): Promise<AgentToolResult<MoveOutput>> {
-    return withTiming("move_file", MOVE_VERSION, () => moveLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "MOVE_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "move_file",
+      MOVE_VERSION,
+      () => moveLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "MOVE_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

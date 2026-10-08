@@ -34,7 +34,8 @@ async function checkPackageJson(ctx: ToolContext, rel: string, abs: string, issu
     issues.push({ path: rel, rule: "json-valid", severity: "error", message: "package.json non valido" });
     return true;
   }
-  if (typeof data["name"] !== "string") issues.push({ path: rel, rule: "pkg-name", severity: "warning", message: "manca campo name" });
+  if (typeof data["name"] !== "string")
+    issues.push({ path: rel, rule: "pkg-name", severity: "warning", message: "manca campo name" });
   if (typeof data["scripts"] !== "object" || data["scripts"] === null)
     issues.push({ path: rel, rule: "pkg-scripts", severity: "warning", message: "manca scripts" });
   const engines = data["engines"] as Record<string, unknown> | undefined;
@@ -58,7 +59,13 @@ async function checkTsconfig(rel: string, abs: string, issues: ConfigIssue[]): P
     return true;
   }
   const co = (data["compilerOptions"] ?? {}) as Record<string, unknown>;
-  if (co["strict"] !== true) issues.push({ path: rel, rule: "ts-strict", severity: "warning", message: "compilerOptions.strict dovrebbe essere true" });
+  if (co["strict"] !== true)
+    issues.push({
+      path: rel,
+      rule: "ts-strict",
+      severity: "warning",
+      message: "compilerOptions.strict dovrebbe essere true",
+    });
   if (co["outDir"] !== undefined && co["outDir"] === co["rootDir"])
     issues.push({ path: rel, rule: "ts-outdir", severity: "error", message: "outDir uguale a rootDir" });
   return true;
@@ -83,7 +90,8 @@ export async function checkConfigLogic(ctx: ToolContext, input: CheckConfigInput
     if (tsc.ok && (await checkTsconfig(tsRel, tsc.abs, issues))) checked++;
   }
   const errors = issues.filter((i) => i.severity === "error").length;
-  const summary = checked === 0 ? "nessun config trovato" : `${checked} file, ${issues.length} issue (${errors} errori)`;
+  const summary =
+    checked === 0 ? "nessun config trovato" : `${checked} file, ${issues.length} issue (${errors} errori)`;
   ctx.logger.info("check_config", { checked, issues: issues.length });
   return { issues: issues.slice(0, 50), summary, checked };
 }

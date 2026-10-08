@@ -126,6 +126,9 @@ export async function demoSecure() {
   const ctx = createContext(process.cwd());
   const [secureWriter] = secureDefinitions(process.cwd());
   // @ts-expect-error demo generica
-  const blocked = await (secureWriter as typeof writerDefinition).execute({ args: { path: "../escape.txt", content: "x" }, ctx });
+  const blocked = await (secureWriter as typeof writerDefinition).execute({
+    args: { path: "../escape.txt", content: "x" },
+    ctx,
+  });
   console.log("blocked:", blocked.ok, blocked.error?.code);
 }

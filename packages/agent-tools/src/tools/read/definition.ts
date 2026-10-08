@@ -22,9 +22,14 @@ export const readDefinition: ToolDefinition<ReadInput, ReadOutput> = {
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: READ_VERSION, since: "0.8.3" },
   async execute({ args, ctx }): Promise<AgentToolResult<ReadOutput>> {
-    return withTiming("read_file", READ_VERSION, () => readLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "READ_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "read_file",
+      READ_VERSION,
+      () => readLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "READ_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

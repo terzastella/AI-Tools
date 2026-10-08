@@ -30,9 +30,21 @@ export interface DiagnoseOutput {
 
 export const DIAGNOSE_VERSION = "1.0.0";
 
-async function run(cmd: string, args: string[], cwd: string, timeout: number, env: NodeJS.ProcessEnv): Promise<{ stdout: string; stderr: string; code: number }> {
+async function run(
+  cmd: string,
+  args: string[],
+  cwd: string,
+  timeout: number,
+  env: NodeJS.ProcessEnv,
+): Promise<{ stdout: string; stderr: string; code: number }> {
   try {
-    const { stdout, stderr } = await execFileAsync(cmd, args, { cwd, timeout, windowsHide: true, maxBuffer: 2_000_000, env });
+    const { stdout, stderr } = await execFileAsync(cmd, args, {
+      cwd,
+      timeout,
+      windowsHide: true,
+      maxBuffer: 2_000_000,
+      env,
+    });
     return { stdout: String(stdout), stderr: String(stderr), code: 0 };
   } catch (e: unknown) {
     const err = e as { stdout?: unknown; stderr?: unknown; code?: number };
@@ -63,7 +75,10 @@ function parseTsc(out: string, cwd: string): DiagnoseIssue[] {
 
 function parseEslintJson(json: string): DiagnoseIssue[] {
   try {
-    const arr = JSON.parse(json) as { filePath: string; messages: { line?: number; column?: number; message: string; severity: number }[] }[];
+    const arr = JSON.parse(json) as {
+      filePath: string;
+      messages: { line?: number; column?: number; message: string; severity: number }[];
+    }[];
     const out: DiagnoseIssue[] = [];
     for (const f of arr) {
       for (const msg of f.messages) {
@@ -125,7 +140,11 @@ export async function diagnoseLogic(ctx: ToolContext, input: DiagnoseInput): Pro
   if (eslintCheck.code === 0) {
     ranEslint = true;
     const scope = rawPaths.join(" ");
-    const res = await run("npx", ["eslint", ...rawPaths, "-f", "json"], ctx.cwd, timeout, env).catch(() => ({ stdout: "[]", stderr: "", code: 1 }));
+    const res = await run("npx", ["eslint", ...rawPaths, "-f", "json"], ctx.cwd, timeout, env).catch(() => ({
+      stdout: "[]",
+      stderr: "",
+      code: 1,
+    }));
     void scope;
     eslintIssues = parseEslintJson(res.stdout || "[]");
   }
@@ -140,7 +159,12 @@ export async function diagnoseLogic(ctx: ToolContext, input: DiagnoseInput): Pro
   }
 
   const issues = [...tscIssues, ...eslintIssues, ...vitestIssues].slice(0, 300);
-  ctx.logger.info("diagnose", { tsc: tscIssues.length, eslint: eslintIssues.length, vitest: vitestIssues.length, runTests });
+  ctx.logger.info("diagnose", {
+    tsc: tscIssues.length,
+    eslint: eslintIssues.length,
+    vitest: vitestIssues.length,
+    runTests,
+  });
   return {
     issues,
     summary: { tsc: tscIssues.length, eslint: eslintIssues.length, vitest: vitestIssues.length },

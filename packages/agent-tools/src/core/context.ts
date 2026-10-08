@@ -77,7 +77,10 @@ function realBase(abs: string): string {
  * Risolve anche i symlink (realpath): un link dentro cwd che punta fuori viene rifiutato.
  * Nota: resta una race TOCTOU microscopica tra check e uso, come in ogni sandbox path-based.
  */
-export function resolveSafePath(ctx: ToolContext, target: string): { ok: true; abs: string } | { ok: false; attempted: string } {
+export function resolveSafePath(
+  ctx: ToolContext,
+  target: string,
+): { ok: true; abs: string } | { ok: false; attempted: string } {
   let cwdReal: string;
   try {
     cwdReal = realpathSync(path.resolve(ctx.cwd));

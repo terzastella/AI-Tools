@@ -25,7 +25,13 @@ export interface FormatCheckOutput {
 
 export const FORMAT_CHECK_VERSION = "1.0.0";
 
-export const ALL_FORMAT_RULES: FormatRule[] = ["trailing-space", "tab-indent", "mixed-eol", "missing-eof-newline", "double-blank"];
+export const ALL_FORMAT_RULES: FormatRule[] = [
+  "trailing-space",
+  "tab-indent",
+  "mixed-eol",
+  "missing-eof-newline",
+  "double-blank",
+];
 
 const EXCLUDE = new Set(["node_modules", "dist", ".git", "coverage", ".agent"]);
 
@@ -63,7 +69,7 @@ export async function formatCheckLogic(ctx: ToolContext, input: FormatCheckInput
     if (!r.ok) throw Object.assign(new Error(`path escapes cwd: ${p}`), { code: "PATH_TRAVERSAL" });
   }
 
-  let candidates: string[] = [];
+  const candidates: string[] = [];
   for (const p of rawPaths) {
     const r = resolveSafePath(ctx, p);
     if (!r.ok) continue;
@@ -93,7 +99,12 @@ export async function formatCheckLogic(ctx: ToolContext, input: FormatCheckInput
     if (content.includes("\0")) continue;
     files++;
     const rel = path.relative(ctx.cwd, abs).replace(/\\/g, "/");
-    if (ruleSet.has("mixed-eol") && content.includes("\r\n") && content.includes("\n") && content.replace(/\r\n/g, "").includes("\n")) {
+    if (
+      ruleSet.has("mixed-eol") &&
+      content.includes("\r\n") &&
+      content.includes("\n") &&
+      content.replace(/\r\n/g, "").includes("\n")
+    ) {
       issues.push({ path: rel, line: 1, rule: "mixed-eol", message: "Mixed CRLF and LF line endings." });
     }
     const lines = content.split("\n");
@@ -116,7 +127,12 @@ export async function formatCheckLogic(ctx: ToolContext, input: FormatCheckInput
       if (issues.length >= 300) break;
     }
     if (ruleSet.has("missing-eof-newline") && content.length > 0 && !content.endsWith("\n")) {
-      issues.push({ path: rel, line: lines.length, rule: "missing-eof-newline", message: "Missing newline at end of file." });
+      issues.push({
+        path: rel,
+        line: lines.length,
+        rule: "missing-eof-newline",
+        message: "Missing newline at end of file.",
+      });
     }
     if (issues.length >= 300) break;
   }

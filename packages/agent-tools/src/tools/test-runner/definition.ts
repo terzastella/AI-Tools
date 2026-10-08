@@ -6,7 +6,8 @@ import { testRunnerPermissions } from "./permissions.js";
 export const testRunnerDefinition: ToolDefinition<TestRunnerInput, TestRunnerOutput> = {
   name: "test_runner",
   label: "Test runner",
-  description: "Lancia vitest/pytest/npm test e ritorna pass/fail strutturati. Senza shell, con timeout. Serve sempre accept umano.",
+  description:
+    "Lancia vitest/pytest/npm test e ritorna pass/fail strutturati. Senza shell, con timeout. Serve sempre accept umano.",
   category: "other",
   parameters: {
     type: "object",
@@ -23,9 +24,14 @@ export const testRunnerDefinition: ToolDefinition<TestRunnerInput, TestRunnerOut
   timeoutMs: DEFAULT_TIMEOUT_MS,
   metadata: { version: TEST_RUNNER_VERSION, since: "0.13.0" },
   async execute({ args, ctx }): Promise<AgentToolResult<TestRunnerOutput>> {
-    return withTiming("test_runner", TEST_RUNNER_VERSION, () => testRunnerLogic(ctx, args), (e: unknown) => {
-      const err = e as Error & { code?: string };
-      return { code: err.code ?? "TEST_FAILED", message: err.message ?? String(e) };
-    });
+    return withTiming(
+      "test_runner",
+      TEST_RUNNER_VERSION,
+      () => testRunnerLogic(ctx, args),
+      (e: unknown) => {
+        const err = e as Error & { code?: string };
+        return { code: err.code ?? "TEST_FAILED", message: err.message ?? String(e) };
+      },
+    );
   },
 };

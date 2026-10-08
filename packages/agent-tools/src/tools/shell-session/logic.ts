@@ -112,12 +112,16 @@ export async function shellSessionLogic(ctx: ToolContext, input: ShellSessionInp
     }
     const cmd = (input.cmd ?? "").trim();
     if (!cmd) throw Object.assign(new Error("cmd is required for start"), { code: "BAD_ARGS" });
-    if (/\s/.test(cmd)) throw Object.assign(new Error("cmd must be a single binary, use args[] (no shell)"), { code: "BAD_ARGS" });
-    if (SHELL_CHARS.test(cmd)) throw Object.assign(new Error("shell metachars not allowed in cmd"), { code: "BAD_ARGS" });
+    if (/\s/.test(cmd))
+      throw Object.assign(new Error("cmd must be a single binary, use args[] (no shell)"), { code: "BAD_ARGS" });
+    if (SHELL_CHARS.test(cmd))
+      throw Object.assign(new Error("shell metachars not allowed in cmd"), { code: "BAD_ARGS" });
     const args = input.args ?? [];
-    if (!Array.isArray(args) || args.length > 50) throw Object.assign(new Error("args must be an array max 50"), { code: "BAD_ARGS" });
+    if (!Array.isArray(args) || args.length > 50)
+      throw Object.assign(new Error("args must be an array max 50"), { code: "BAD_ARGS" });
     const full = [cmd, ...args].join(" ");
-    if (isDangerousCommand(full)) throw Object.assign(new Error("dangerous command blocked"), { code: "POLICY_DENIED" });
+    if (isDangerousCommand(full))
+      throw Object.assign(new Error("dangerous command blocked"), { code: "POLICY_DENIED" });
 
     let cwd = ctx.cwd;
     if (input.workdir) {
